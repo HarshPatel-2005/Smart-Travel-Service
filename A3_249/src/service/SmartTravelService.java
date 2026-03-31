@@ -777,9 +777,9 @@ import travel_package.Trip;
 	    
 	    // Copy Arrays (FOR PREDEFINED)
 	    
-	    public Transportation[] copyTransportArray(List<Transportation> original) {
-	        List<Transportation> copyArray = new ArrayList<>(original.size());
-	        if (original.size() == 0) { 
+	    public Transportation[] copyTransportArray(Transportation[] original) {
+	        Transportation[] copyArray = new Transportation[original.length];
+	        if (original.length == 0) { 
 	        	System.out.println("Nothing to copy! Returning to menu!"); }
 	        else {
 	            for (int i = 0; i < original.length; i++) {
