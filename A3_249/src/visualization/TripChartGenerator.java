@@ -20,6 +20,7 @@ import travel_package.Trip;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 //Assignment 3
 //Question: Smart Travel Agency
@@ -95,11 +96,11 @@ public class TripChartGenerator {
      */
     public static void generateCostBarChart(SmartTravelService service) throws IOException {
         
-    	Trip[] trips = service.getAllTrips();
+    	List<Trip> trips = service.getAllTrips();
     	int count = service.getTripCount();
     	DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (int i = 0; i < count; i++) {
-            dataset.addValue(service.calculateTripTotal(trips[i]), "Total Cost", trips[i].getTripID());
+        for (Trip tr : trips) {
+            dataset.addValue(service.calculateTripTotal(tr), "Total Cost", tr.getTripID());
         }
 
         JFreeChart chart = ChartFactory.createBarChart(
@@ -122,13 +123,13 @@ public class TripChartGenerator {
      */
     public static void generateDestinationPieChart(SmartTravelService service) throws IOException {
         
-    	Trip[] trips = service.getAllTrips();
+    	List<Trip> trips = service.getAllTrips();
     	int count = service.getTripCount();
     	DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
 
         // Count trips per destination
-        for (int i = 0; i < count; i++) {
-            String destination = trips[i].getDestination();
+        for (Trip tr : trips) {
+            String destination = tr.getDestination();
             if (dataset.getIndex(destination) != -1) {
                 double value = dataset.getValue(destination).doubleValue();
                 dataset.setValue(destination, value + 1);
@@ -157,11 +158,11 @@ public class TripChartGenerator {
      */
     public static void generateDurationLineChart(SmartTravelService service) throws IOException {
         
-    	Trip[] trips = service.getAllTrips();
+    	List<Trip> trips = service.getAllTrips();
     	int count = service.getTripCount();
     	DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (int i = 0; i < count; i++) {
-            dataset.addValue(trips[i].getDurationInDays(), "Duration (days)", trips[i].getTripID());
+        for (Trip tr : trips) {
+            dataset.addValue(tr.getDurationInDays(), "Duration (days)", tr.getTripID());
         }
 
         JFreeChart chart = ChartFactory.createLineChart(

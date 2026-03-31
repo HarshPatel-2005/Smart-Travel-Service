@@ -32,6 +32,7 @@ import travel_package.Trip;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.List;
 import java.io.IOException;
 
 public class DashboardGenerator {
@@ -143,12 +144,12 @@ public class DashboardGenerator {
             Client client = service.getClient(i);
             double spent = 0;
   
-            Trip[] trips = service.getAllTrips();
+            List<Trip> trips = service.getAllTrips();
             int tripCount = service.getTripCount();
             
-            for(int j = 0; j < tripCount; j++) {
-            	if(trips[j].getClient().getClientID().equalsIgnoreCase(client.getClientID())) {
-            		spent += trips[j].calculateTotalCost();
+            for(Trip tr : trips) {
+            	if(tr.getClient().getClientID().equalsIgnoreCase(client.getClientID())) {
+            		spent += tr.calculateTotalCost();
             	}
             }
             
@@ -248,10 +249,10 @@ public class DashboardGenerator {
         // 1. Total Revenue & Avg Cost
         double totalRevenue = 0.0;
         
-        Trip[] trips = service.getAllTrips();
+        List<Trip> trips = service.getAllTrips();
         
-		for(int i = 0; i < tripCount; i++) {
-			totalRevenue += trips[i].calculateTotalCost();
+		for(Trip tr : trips) {
+			totalRevenue += tr.calculateTotalCost();
 		}
 		
 		double avgCost = (totalRevenue/tripCount);
@@ -259,8 +260,8 @@ public class DashboardGenerator {
         // 2. Average Duration (days)
         double totalDays = 0.0, avgDuration =0.0;
         
-		for(int i = 0; i < tripCount; i++) {
-			totalDays += trips[i].getDurationInDays();
+		for(Trip tr : trips) {
+			totalDays += tr.getDurationInDays();
 		}
 		
 		avgDuration = totalDays/tripCount;
@@ -335,14 +336,14 @@ public class DashboardGenerator {
 		// If it's more than maxVisits, it will be saved to maxVisits and mostVisited will be the destination that we are checking.
     	// This is done to check which destination has the largest visit
     																				
-    	Trip[] trips = service.getAllTrips();
+    	List<Trip> trips = service.getAllTrips();
         int tripCount = service.getTripCount();
 
         String mostVisited = null;
         int maxVisits = 0;
 
-        for (int i = 0; i < tripCount; i++) {
-            String currentDestination = trips[i].getDestination();
+        for (Trip tr : trips) {
+            String currentDestination = tr.getDestination();
 
             int visits = countDestinationVisits(service, currentDestination);
 
@@ -362,11 +363,11 @@ public class DashboardGenerator {
     																							// of the given destination exist and increments the counter based off of that
     	int count = 0;
 
-        Trip[] trips = service.getAllTrips(); 
+    	List<Trip> trips = service.getAllTrips();
         int tripCount = service.getTripCount();
 
-        for (int i = 0; i < tripCount; i++) {
-            if (trips[i].getDestination().equalsIgnoreCase(destination)) {
+        for (Trip tr : trips) {
+            if (tr.getDestination().equalsIgnoreCase(destination)) {
                 count++;
             }
         }

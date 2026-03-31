@@ -11,6 +11,8 @@ package service;
 // The SmartTravelService file now contains the logic of the program. This file allows the connection to happen between every file
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import client_package.Client;
@@ -39,28 +41,16 @@ import travel_package.Trip;
 		
 		private static Scanner input;
 		
-		private static Client[] clients;
-		private static int clientCount;
-		
-		private static Trip[] trips;
-		private static int tripCount;
-		
-		private static Transportation[] transportOptions;
-		private static int transportCount;
-		
-		private static Accommodation[] accomodationOptions;
-		private static int accomodationCount;
+		private static List<Client> clients;	
+		private static List<Trip> trips;	
+		private static List<Transportation> transportOptions;		
+		private static List<Accommodation> accomodationOptions;
 		
 		public SmartTravelService(Scanner input) {
-			clients = new Client[100];
-			accomodationOptions = new Accommodation[50];
-	        transportOptions = new Transportation[50];
-	        trips = new Trip[200];
-	
-	        clientCount = 0;
-	        accomodationCount = 0;
-	        transportCount = 0;
-	        tripCount = 0;
+			clients = new ArrayList<>();
+			accomodationOptions = new ArrayList<>();
+	        transportOptions = new ArrayList<>();
+	        trips = new ArrayList<>();
 	        
 	        SmartTravelService.input = input;
 		}
@@ -81,14 +71,17 @@ import travel_package.Trip;
 	        // If the email exist, the user shall not proceed through due to the fact that the email already exist for a different client
 	        
 	        try {
-	            for (int i = 0; i < clientCount; i++) {
-	                if (clients[i].getEmail().equalsIgnoreCase(email)) {
+	        	
+	            for (Client c : clients) {
+	                if (c.getEmail().equalsIgnoreCase(email)) {
 	                    throw new DuplicateEmailException("Email already exists!");
 	                }
 	            }
+	            
 	            Client newClient = new Client(firstName, lastName, email);
-	            clients[clientCount++] = newClient;
+	            clients.add(newClient);
 	            System.out.println("Client added successfully! \nClient ID: " + newClient.getClientID());
+	            
 	        } catch (InvalidClientDataException e) {
 	            System.out.println("Error: Invalid client data. " + e.getMessage()); // If the data is incorrect, it catches InvalidClientDataException 
 	        } catch (DuplicateEmailException e) {
@@ -98,128 +91,131 @@ import travel_package.Trip;
 
 	    public void editClient() {
 	    	
-	        if (clientCount == 0) { 
+	        if (clients.size() == 0) { 
 	        	System.out.println("There are no clients! Returning to Menu!"); 
 	        	return; 
 	        }
 
-	        System.out.print("What client would you like to edit? (Enter Client ID): ");
-	        for (int i = 0; i < clientCount; i++) 
-	        	System.out.print("\nClient ID: " + clients[i].getClientID());
-	        
-	        System.out.print("\nClient ID choice: ");
-	        String clientID = input.nextLine();
+	        try {
+				System.out.print("What client would you like to edit? (Enter Client ID): ");
+				for (Client c : clients) 
+					System.out.print("\nClient ID: " + c.getClientID());
+				
+				System.out.print("\nClient ID choice: ");
+				String clientID = input.nextLine();
 
-	        Client clientToEdit = null;
-	        for (int i = 0; i < clientCount; i++) {
-	            if (clients[i].getClientID().equalsIgnoreCase(clientID)) { 
-	            	clientToEdit = clients[i]; 
-	            	break; 
-	            }
-	        }
-	        
-	        if (clientToEdit == null) { 
-	        	System.out.println("Client not found!"); 
-	        	return; 
-	        }
+				Client clientToEdit = null;
+				for (Client c : clients) {
+				    if (c.getClientID().equalsIgnoreCase(clientID)) { 
+				    	clientToEdit = c; 
+				    	break; 
+				    }
+				}
+				
+				if (clientToEdit == null) { 
+					throw new EntityNotFoundException("Client Not Found!");
+				}
 
-	        System.out.println("What would you like to edit?");
-	        System.out.println("1. First Name\n2. Last Name\n3. Email");
-	        System.out.print("Enter your choice: ");
-	        int editChoice = input.nextInt();
-	        input.nextLine();
+				System.out.println("What would you like to edit?");
+				System.out.println("1. First Name\n2. Last Name\n3. Email");
+				System.out.print("Enter your choice: ");
+				int editChoice = input.nextInt();
+				input.nextLine();
 
-	        // Since we are updating the user's clients in this method, we must also verify what they have updated to is valid. This is why it will run through the switch cases depending on what they pick,
-	        // then it will let them put an option and this option is sent to the Client class where in those methods that we are updating the information we can throw InvalidClientException if their input is invalid.
-	        // This will then be caught here
-	        switch (editChoice) {
-	            case 1:
-	                System.out.print("Enter new first name: ");
-	                try { 
-	                	clientToEdit.setFirstName(input.nextLine()); 
-	                	System.out.println("First name updated successfully!"); 
-	                }
-	                catch (InvalidClientDataException e) { 
-	                	System.out.println("Error: " + e.getMessage()); 
-	                }
-	                break;
-	            case 2:
-	                System.out.print("Enter new last name: ");
-	                try { 
-	                	clientToEdit.setLastName(input.nextLine()); 
-	                	System.out.println("Last name updated successfully!"); 
-	                }
-	                catch (InvalidClientDataException e) { 
-	                	System.out.println("Error: " + e.getMessage()); 
-	                }
-	                break;
-	            case 3:
-	                System.out.print("Enter new email: ");
-	                try { 
-	                	clientToEdit.setEmail(input.nextLine()); 
-	                	System.out.println("Email updated successfully!"); 
-	                }
-	                catch (InvalidClientDataException e) { 
-	                	System.out.println("Error: " + e.getMessage()); 
-	                }
-	                break;
-	            default: 
-	            	System.out.println("Invalid choice!"); 
-	            	break;
-	        }
+				// Since we are updating the user's clients in this method, we must also verify what they have updated to is valid. This is why it will run through the switch cases depending on what they pick,
+				// then it will let them put an option and this option is sent to the Client class where in those methods that we are updating the information we can throw InvalidClientException if their input is invalid.
+				// This will then be caught here
+				switch (editChoice) {
+				    case 1:
+				        System.out.print("Enter new first name: ");
+				        try { 
+				        	clientToEdit.setFirstName(input.nextLine()); 
+				        	System.out.println("First name updated successfully!"); 
+				        }
+				        catch (InvalidClientDataException e) { 
+				        	System.out.println("Error: " + e.getMessage()); 
+				        }
+				        break;
+				    case 2:
+				        System.out.print("Enter new last name: ");
+				        try { 
+				        	clientToEdit.setLastName(input.nextLine()); 
+				        	System.out.println("Last name updated successfully!"); 
+				        }
+				        catch (InvalidClientDataException e) { 
+				        	System.out.println("Error: " + e.getMessage()); 
+				        }
+				        break;
+				    case 3:
+				        System.out.print("Enter new email: ");
+				        try { 
+				        	clientToEdit.setEmail(input.nextLine()); 
+				        	System.out.println("Email updated successfully!"); 
+				        }
+				        catch (InvalidClientDataException e) { 
+				        	System.out.println("Error: " + e.getMessage()); 
+				        }
+				        break;
+				    default: 
+				    	System.out.println("Invalid choice!"); 
+				    	break;
+				}
+			} catch (EntityNotFoundException e) {
+				System.out.println("Error: " + e.getMessage());
+			}
 	    }
 
 	    public void deleteClient() {
 	    	
-	        if (clientCount == 0) { 
+	        if (clients.size() == 0) { 
 	        	System.out.println("There are no clients! Returning to Menu!"); 
 	        	return; 
 	        }
 
-	        System.out.print("What client would you like to delete? (Enter Client ID) ");
-	        for (int i = 0; i < clientCount; i++) 
-	        	System.out.print("\nClient ID: " + clients[i].getClientID());
-	        
-	        System.out.print("\nClient ID choice: ");
-	        String clientID = input.nextLine();
+	        try {
+				System.out.print("What client would you like to delete? (Enter Client ID) ");
+				for (Client c : clients) 
+					System.out.print("\nClient ID: " + c.getClientID());
+				
+				System.out.print("\nClient ID choice: ");
+				String clientID = input.nextLine();
 
-	        int clientToDelete = -1;
-	        for (int i = 0; i < clientCount; i++) {
-	            if (clients[i].getClientID().equalsIgnoreCase(clientID)) { 
-	            	clientToDelete = i; 
-	            	break; 
-	            }
-	        }
-	        
-	        if (clientToDelete == -1) { 
-	        	System.out.println("Client not found!"); 
-	        	return; 
-	        }
-
-	        for (int i = clientToDelete; i < clientCount - 1; i++) 
-	        	clients[i] = clients[i + 1];
-	        
-	        clients[--clientCount] = null;
-	        System.out.println("Client deleted successfully!");
+				Client clientToDelete = null;
+				for (Client c : clients) {
+				    if (c.getClientID().equalsIgnoreCase(clientID)) { 
+				    	clientToDelete = c; 
+				    	break; 
+				    }
+				}
+				
+				if (clientToDelete == null) { 
+					throw new EntityNotFoundException("Client Not Found!");
+				}
+				
+				clients.remove(clientToDelete);
+				System.out.println("Client deleted successfully!");
+			} catch (EntityNotFoundException e) {
+				System.out.println("Error: " + e.getMessage());
+			}
 	    }
 
 	    public void listAllClients() {
-	        if (clientCount == 0) 
+	        if (clients.size() == 0) 
 	        	System.out.println("No clients found!");
 	        else 
-	        	for (int i = 0; i < clientCount; i++) 
-	        		System.out.println(clients[i].toString());
+	        	for (Client c : clients) 
+	        		System.out.println(c.toString());
 	    }
 	    
 	    public Client getClient(int clientIndex) {
-	    	if (clientIndex < 0 || clientIndex >= clientCount) {
+	    	if (clientIndex < 0 || clientIndex >= clients.size()) {
 	            return null;
 	        }
-	        return clients[clientIndex];
+	        return clients.get(clientIndex);
 	    }
 	    
 	    public int getClientCount() {
-	    	return clientCount;
+	    	return clients.size();
 	    }
 
 	    // -------------------------
@@ -228,7 +224,7 @@ import travel_package.Trip;
 
 	    public void createTrip() {
 	    	
-	        if (clientCount == 0) { 
+	        if (clients.size() == 0) { 
 	        	System.out.println("There are no clients! Returning to Menu!"); 
 	        	return; 
 	        }
@@ -236,16 +232,16 @@ import travel_package.Trip;
 	        try {
 	            System.out.print("\nAvailable Client Options:");
 	            
-	            for (int i = 0; i < clientCount; i++) 
-	            	System.out.print("\nClient ID: " + clients[i].getClientID());
+	            for (Client c : clients) 
+	            	System.out.print("\nClient ID: " + c.getClientID());
 	            
 	            System.out.print("\nClient ID choice: ");
 	            String clientID = input.nextLine();
 
 	            Client clientToCompare = null;
-	            for (int i = 0; i < clientCount; i++) {
-	                if (clients[i].getClientID().equalsIgnoreCase(clientID)) { 
-	                	clientToCompare = clients[i]; 
+	            for (Client c : clients) {
+	                if (c.getClientID().equalsIgnoreCase(clientID)) { 
+	                	clientToCompare = c; 
 	                	break; 
 	                }
 	            }
@@ -253,43 +249,45 @@ import travel_package.Trip;
 	            if (clientToCompare == null) // If the client does not exist in the system, EntityNotFoundException exception will handle this issue
 	            	throw new EntityNotFoundException("Client not found!");
 
-	            if (transportCount == 0) { 
+	            if (transportOptions.size() == 0) { 
 	            	System.out.println("There are no transportation options available! Returning to Menu!"); 
 	            	return; 
 	            }
 	            
 	            System.out.println("\nAvailable transportation options:");
-	            for (int i = 0; i < transportCount; i++) 
-	            	System.out.println("Transportation ID: " + transportOptions[i].getTransportID());
+	            for (Transportation t : transportOptions) 
+	            	System.out.println("Transportation ID: " + t.getTransportID());
 	            
 	            System.out.print("Choice: ");
 	            String transportID = input.nextLine();
 
 	            Transportation selectedTransport = null;
-	            for (int i = 0; i < transportCount; i++) {
-	                if (transportOptions[i].getTransportID().equalsIgnoreCase(transportID)) { 
-	                	selectedTransport = transportOptions[i]; break; }
+	            for (Transportation t : transportOptions) {
+	                if (t.getTransportID().equalsIgnoreCase(transportID)) { 
+	                	selectedTransport = t; 
+	                	break; 
+	                }
 	            }
 	            
 	            if (selectedTransport == null) // If the transportation does not exist in the system, EntityNotFoundException will handle this issue
 	            	throw new EntityNotFoundException("Transportation not found!");
 
-	            if (accomodationCount == 0) { 
+	            if (accomodationOptions.size() == 0) { 
 	            	System.out.println("There are no accommodation options available! Returning to Menu!"); 
 	            	return; 
 	            }
 	            
 	            System.out.print("\nAvailable accommodation options:");
-	            for (int i = 0; i < accomodationCount; i++) 
-	            	System.out.print("\nAccommodation ID: " + accomodationOptions[i].getAccommodationID());
+	            for (Accommodation a : accomodationOptions) 
+	            	System.out.print("\nAccommodation ID: " + a.getAccommodationID());
 	            
 	            System.out.print("\nChoice: ");
 	            String accomodationID = input.nextLine();
 
 	            Accommodation selectedAccomodation = null;
-	            for (int i = 0; i < accomodationCount; i++) {
-	                if (accomodationOptions[i].getAccommodationID().equalsIgnoreCase(accomodationID)) { 
-	                	selectedAccomodation = accomodationOptions[i]; 
+	            for (Accommodation a : accomodationOptions) {
+	                if (a.getAccommodationID().equalsIgnoreCase(accomodationID)) { 
+	                	selectedAccomodation = a; 
 	                	break; 
 	                }
 	            }
@@ -300,15 +298,17 @@ import travel_package.Trip;
 	            // If everything exist nothing will need to be caught and will continue
 
 	            System.out.print("\nEnter trip destination: ");
-	            String destination = input.nextLine();
+	            	String destination = input.nextLine();
 	            System.out.print("Enter trip duration (in days): ");
-	            int duration = input.nextInt();
+	            	int duration = input.nextInt();
 	            System.out.print("Enter trip base price: ");
-	            double basePrice = input.nextDouble();
+	            	double basePrice = input.nextDouble();
+	            	
 	            input.nextLine();
 
 	            Trip newTrip = new Trip(destination, duration, basePrice, clientToCompare, selectedTransport, selectedAccomodation);
-	            trips[tripCount++] = newTrip;
+	            
+	            trips.add(newTrip);
 	            clientToCompare.addAmountSpent(newTrip.calculateTotalCost());
 	            System.out.println("Trip created successfully! \nTrip ID: " + newTrip.getTripID());
 
@@ -321,23 +321,23 @@ import travel_package.Trip;
 
 	    public void editTrip() {
 	    	
-	        if (tripCount == 0) { 
+	        if (trips.size() == 0) { 
 	        	System.out.println("There are no Trips! Returning to Menu!"); 
 	        	return; 
 	        }
 
 	        try {
 				System.out.print("What trip would you like to edit? (Enter Trip ID)");
-				for (int i = 0; i < tripCount; i++) 
-					System.out.print("\nTrip ID: " + trips[i].getTripID());
+				for (Trip tr : trips) 
+					System.out.print("\nTrip ID: " + tr.getTripID());
 				
 				System.out.print("\nChoice: ");
 				String tripID = input.nextLine();
 
 				Trip tripToEdit = null;
-				for (int i = 0; i < tripCount; i++) {
-				    if (trips[i].getTripID().equalsIgnoreCase(tripID)) { 
-				    	tripToEdit = trips[i];
+				for (Trip tr : trips) {
+				    if (tr.getTripID().equalsIgnoreCase(tripID)) { 
+				    	tripToEdit = tr;
 				    	break; 
 				    }
 				}
@@ -388,33 +388,30 @@ import travel_package.Trip;
 
 	    public void cancelTrip() {
 	    	
-	        if (tripCount == 0) { 
+	        if (trips.size() == 0) { 
 	        	System.out.println("There are no trips! Returning to Menu!"); 
 	        	return; 
 	        }
 
 	        try {
 				System.out.print("Which trip would you like to cancel? (Enter Trip Id) ");
-				for (int i = 0; i < tripCount; i++) 
-					System.out.print("\nTrip ID: " + trips[i].getTripID());
+				for (Trip tr : trips) 
+					System.out.print("\nTrip ID: " + tr.getTripID());
 				
 				System.out.print("\nChoice: ");
 				String tripId = input.nextLine();
 
-				int tripToCancel = -1;
-				for (int i = 0; i < tripCount; i++) {
-				    if (trips[i].getTripID().equalsIgnoreCase(tripId)) { 
-				    	tripToCancel = i; 
+				Trip tripToCancel = null;
+				for (Trip tr : trips) {
+				    if (tr.getTripID().equalsIgnoreCase(tripId)) { 
+				    	tripToCancel = tr; 
 				    }
 				}
-				if (tripToCancel == -1) { 
+				if (tripToCancel == null) { 
 					throw new EntityNotFoundException("Trip not found!");
 				}
-
-				for (int i = tripToCancel; i < tripCount - 1; i++) 
-					trips[i] = trips[i + 1];
 				
-				trips[--tripCount] = null;
+				trips.remove(tripToCancel);
 				System.out.println("Trip cancelled successfully!");
 			} catch (EntityNotFoundException e) {
 				System.out.println("Error: " + e.getMessage());
@@ -422,40 +419,44 @@ import travel_package.Trip;
 	    }
 
 	    public static void listAllTrips() {
-	        if (tripCount == 0) System.out.println("No trips found!");
-	        else for (int i = 0; i < tripCount; i++) {
+	        if (trips.size() == 0) {
+	        	System.out.println("No trips found!");
+	        }
+	        else {
+	        	for (Trip tr : trips) {
 	        	System.out.println("-------------------");
-				System.out.println(trips[i].toString());
-				System.out.println("\n" + trips[i].getClient().toString());
-				System.out.println(trips[i].getTransportation().toString());
-				System.out.println(trips[i].getAccommodation().toString());
+				System.out.println(tr.toString());
+				System.out.println("\n" + tr.getClient().toString());
+				System.out.println(tr.getTransportation().toString());
+				System.out.println(tr.getAccommodation().toString());
 				System.out.println("-------------------");
+	        	}
 	        }
 	    }
 
 	    public void listTripsByClient() {
 	    	
-	        if (clientCount == 0) { 
+	        if (clients.size() == 0) { 
 	        	System.out.println("There are no clients! Returning to Menu!"); 
 	        	return; 
 	        }
-	        if (tripCount == 0) { 
+	        if (trips.size() == 0) { 
 	        	System.out.println("There are no Trips! Returning to Menu!"); 
 	        	return; 
 	        }
 
 	        try {
 				System.out.print("Enter Client ID to list their trips ");
-				for (int i = 0; i < clientCount; i++) 
-					System.out.print("\nClient ID: " + clients[i].getClientID());
+				for (Client c : clients) 
+					System.out.print("\nClient ID: " + c.getClientID());
 				
 				System.out.print("\nChoice: ");
 				String clientID = input.nextLine();
 
 				boolean found = false;
-				for (int i = 0; i < tripCount; i++) {
-				    if (trips[i].getClient().getClientID().equalsIgnoreCase(clientID)) {
-				        System.out.println(trips[i].toString());
+				for (Trip tr : trips) {
+				    if (tr.getClient().getClientID().equalsIgnoreCase(clientID)) {
+				        System.out.println(tr.toString());
 				        found = true;
 				    }
 				}
@@ -472,17 +473,17 @@ import travel_package.Trip;
 	    }
 	    
 	    public Trip getTrip(int tripIndex) { // Method to receive an index and match it with the index of the array in this file
-	    	if (tripIndex < 0 || tripIndex >= tripCount) { // If the index is invalid return nothing
+	    	if (tripIndex < 0 || tripIndex >= trips.size()) { // If the index is invalid return nothing
 	            return null;
 	        }
-	        return trips[tripIndex];
+	        return trips.get(tripIndex);
 	    }
 	    
 	    public int getTripCount() { // Method to receive the number of trips
-	    	return tripCount;
+	    	return trips.size();
 	    }
 	    
-	    public Trip[] getAllTrips() { // Method to receive the entire array to use outside of this class
+	    public List<Trip> getAllTrips() { // Method to receive the entire array to use outside of this class
 	    	return trips;
 	    }
 
@@ -531,7 +532,8 @@ import travel_package.Trip;
 	            }
 	            
 	            input.nextLine();
-	            transportOptions[transportCount++] = newTransport;
+	            transportOptions.add(newTransport);
+	            
 	            System.out.println("Transportation option added successfully! \nTransport ID: " + newTransport.getTransportID());
 	        } catch (InvalidTransportDataException e) {
 	            System.out.println("Error: Invalid transportation data. " + e.getMessage());
@@ -540,34 +542,33 @@ import travel_package.Trip;
 
 	    public void removeTransportation() {
 	    	
-	        if (transportCount == 0) { 
+	        if (transportOptions.size() == 0) { 
 	        	System.out.println("There are no transportations! Returning to Menu!"); 
 	        	return; 
 	        }
 
 	        try {
 				System.out.print("Enter Transport ID to remove ");
-				for (int i = 0; i < transportCount; i++) 
-					System.out.print("\nTransport ID: " + transportOptions[i].getTransportID());
+				for (Transportation t : transportOptions) 
+					System.out.print("\nTransport ID: " + t.getTransportID());
 				
 				System.out.print("\nChoice: ");
 				String transportID = input.nextLine();
 
-				int transportToRemove = -1;
-				for (int i = 0; i < transportCount; i++) {
-				    if (transportOptions[i].getTransportID().equalsIgnoreCase(transportID)) { 
-				    	transportToRemove = i; 
+				Transportation transportToRemove = null;
+				for (Transportation t : transportOptions) {
+				    if (t.getTransportID().equalsIgnoreCase(transportID)) { 
+				    	transportToRemove = t; 
 				    	break; 
 				    }
 				}
 				
-				if (transportToRemove == -1) { // If the transportation is not found, allow EntityNotFoundException to handle this 
+				if (transportToRemove == null) { // If the transportation is not found, allow EntityNotFoundException to handle this 
 					throw new EntityNotFoundException("Transportation Not Found!");
 				}
-
-				for (int i = transportToRemove; i < transportCount - 1; i++) transportOptions[i] = transportOptions[i + 1];
-				transportOptions[--transportCount] = null;
-				System.out.println("Transportation option removed successfully!");
+				
+				transportOptions.remove(transportToRemove);
+				System.out.println("Transportation option removed successfully!");				
 			} catch (EntityNotFoundException e) {
 				System.out.println("Error: " + e.getMessage());
 			}
@@ -575,7 +576,7 @@ import travel_package.Trip;
 
 	    public void listTransportationByType() {
 	        int counter = 0;
-	        if (transportCount == 0) { 
+	        if (transportOptions.size() == 0) { 
 	        	System.out.println("There are no Transportations! Returning to Menu!"); 
 	        	return; 
 	        }
@@ -584,9 +585,9 @@ import travel_package.Trip;
 				System.out.print("Which Transportation type would you like to view (Flight, Train, Bus): ");
 				String userTransportationInput = input.nextLine();
 
-				for (int i = 0; i < transportCount; i++) {
-				    if (transportOptions[i].getClass().getSimpleName().equalsIgnoreCase(userTransportationInput)) {
-				        System.out.println("\n" + transportOptions[i].toString());
+				for (Transportation t : transportOptions) {
+				    if (t.getClass().getSimpleName().equalsIgnoreCase(userTransportationInput)) {
+				        System.out.println("\n" + t.toString());
 				        counter++;
 				    }
 				}
@@ -631,7 +632,8 @@ import travel_package.Trip;
 	                    System.out.println("Invalid accommodation type!");
 	                    return;
 	            }
-	            accomodationOptions[accomodationCount++] = newAccommodation;
+	            
+	            accomodationOptions.add(newAccommodation);
 	            System.out.println("Accommodation option added successfully! \nAccommodation ID: " + newAccommodation.getAccommodationID());
 	        } catch (InvalidAccommodationDataException e) {
 	            System.out.println("Error: Invalid accommodation data. " + e.getMessage());
@@ -640,36 +642,33 @@ import travel_package.Trip;
 
 	    public void removeAccomodation() {
 	    	
-	        if (accomodationCount == 0) { 
+	        if (accomodationOptions.size() == 0) { 
 	        	System.out.println("There are no accommodations! Returning to Menu!"); 
 	        	return; 
 	        }
 
 	        try {
 				System.out.print("Enter Accommodation ID to remove ");
-				for (int i = 0; i < accomodationCount; i++) 
-					System.out.print("\nAccommodation ID: " + accomodationOptions[i].getAccommodationID());
+				for (Accommodation a : accomodationOptions) 
+					System.out.print("\nAccommodation ID: " + a.getAccommodationID());
 				
 				System.out.print("\nChoice: ");
 				String accommodationID = input.nextLine();
 
-				int accommodationToRemove = -1;
-				for (int i = 0; i < accomodationCount; i++) {
-				    if (accomodationOptions[i].getAccommodationID().equalsIgnoreCase(accommodationID)) { 
-				    	accommodationToRemove = i; 
+				Accommodation accommodationToRemove = null;
+				for (Accommodation a : accomodationOptions) {
+				    if (a.getAccommodationID().equalsIgnoreCase(accommodationID)) { 
+				    	accommodationToRemove = a; 
 				    	break; 
 				    }
 				}
 				
-				if (accommodationToRemove == -1) { 
+				if (accommodationToRemove == null) { 
 					// If the accommodation is not found, allow EntityNotFoundException to handle this 
 					throw new EntityNotFoundException("Transportation Not Found!");
 				}
-
-				for (int i = accommodationToRemove; i < accomodationCount - 1; i++) 
-					accomodationOptions[i] = accomodationOptions[i + 1];
 				
-				accomodationOptions[--accomodationCount] = null;
+				accomodationOptions.remove(accommodationToRemove);
 				System.out.println("Accommodation option removed successfully!");
 			} catch (EntityNotFoundException e) {
 				System.out.println("Error: " + e.getMessage());
@@ -678,7 +677,7 @@ import travel_package.Trip;
 
 	    public void listAccomodationByType() {
 	        int counter = 0;
-	        if (accomodationCount == 0) { 
+	        if (accomodationOptions.size() == 0) { 
 	        	System.out.println("There are no accommodations! Returning to Menu!"); 
 	        	return; 
 	        }
@@ -687,9 +686,9 @@ import travel_package.Trip;
 				System.out.print("Which Accommodation type would you like to view (Hotel, Hostel): ");
 				String userAccommodationInput = input.nextLine();
 
-				for (int i = 0; i < accomodationCount; i++) {
-				    if (accomodationOptions[i].getClass().getSimpleName().equalsIgnoreCase(userAccommodationInput)) {
-				        System.out.println(accomodationOptions[i].toString());
+				for (Accommodation a : accomodationOptions) {
+				    if (a.getClass().getSimpleName().equalsIgnoreCase(userAccommodationInput)) {
+				        System.out.println(a.toString());
 				        counter++;
 				    }
 				}
@@ -706,18 +705,18 @@ import travel_package.Trip;
 
 	    // For General Usage
 	    public void displayMostExpensiveTrip() {
-	        if (tripCount == 0) { 
+	        if (trips.size() == 0) { 
 	        	System.out.println("No trips found!"); 
 	        	return; 
 	        }
 
 	        double highestCost = 0.0;
-	        Trip mostExpensiveTrip = trips[0];
+	        Trip mostExpensiveTrip = trips.get(0);
 
-	        for (int i = 0; i < trips.length; i++) {
-	            if (trips[i].calculateTotalCost() > highestCost) {
-	                highestCost = trips[i].calculateTotalCost();
-	                mostExpensiveTrip = trips[i];
+	        for (Trip tr : trips) {
+	            if (tr.calculateTotalCost() > highestCost) {
+	                highestCost = tr.calculateTotalCost();
+	                mostExpensiveTrip = tr;
 	            }
 	        }
 	        System.out.println("Most Expensive trip ID: " + mostExpensiveTrip.getTripID() + ", Cost: $" + highestCost);
@@ -745,23 +744,24 @@ import travel_package.Trip;
 	    public void displayCostOfTrip() {
 	        int counter = 0;
 	        
-	        if (tripCount == 0) { 
+	        if (trips.size() == 0) { 
 	        	System.out.println("No trips found!"); 
 	        	return; 
 	        }
 
 	        try {
-				Trip displayTrip = trips[0];
+				Trip displayTrip = trips.get(0);
 				System.out.println("\nAvailable trips:");
-				for (int i = 0; i < tripCount; i++) 
-					System.out.println(trips[i].getTripID());
+				for (Trip tr : trips) 
+					System.out.println(tr.getTripID());
 
 				System.out.print("Which trip's cost would you like to display? ");
 					String chosenTrip = input.nextLine();
 
-				for (int i = 0; i < tripCount; i++) {
-				    if (trips[i].getTripID().equalsIgnoreCase(chosenTrip)) { 
-				    	displayTrip = trips[i]; counter++; 
+				for (Trip tr : trips) {
+				    if (tr.getTripID().equalsIgnoreCase(chosenTrip)) { 
+				    	displayTrip = tr; 
+				    	counter++; 
 				    }
 				}
 
@@ -777,9 +777,9 @@ import travel_package.Trip;
 	    
 	    // Copy Arrays (FOR PREDEFINED)
 	    
-	    public Transportation[] copyTransportArray(Transportation[] original) {
-	        Transportation[] copyArray = new Transportation[original.length];
-	        if (original.length == 0) { 
+	    public Transportation[] copyTransportArray(List<Transportation> original) {
+	        List<Transportation> copyArray = new ArrayList<>(original.size());
+	        if (original.size() == 0) { 
 	        	System.out.println("Nothing to copy! Returning to menu!"); }
 	        else {
 	            for (int i = 0; i < original.length; i++) {
