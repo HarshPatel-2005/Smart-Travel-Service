@@ -832,25 +832,25 @@ import travel_package.Trip;
 	    // It has the possibility to produce a IOException on every file which is why we separate them in case everything is fine
 		public static void SaveAllData(String folderPath){
 			try {
-				ClientFileManager.saveClients(clients, clientCount, folderPath + "clients.csv");
+				ClientFileManager.saveClients(clients, clients.size(), folderPath + "clients.csv");
 			} catch (IOException e) {
 				System.out.println("Client File does not exist!");
 			}
 			
 			try {
-				TransportationFileManager.saveTransportation(transportOptions, transportCount, folderPath + "transports.csv");
+				TransportationFileManager.saveTransportation(transportOptions, transportOptions.size(), folderPath + "transports.csv");
 			} catch (IOException e) {
 				System.out.println("Transportation File does not exist!");
 			}
 			
 			try {
-				AccommodationFileManager.saveAccommodation(accomodationOptions, accomodationCount, folderPath + "accommodations.csv");
+				AccommodationFileManager.saveAccommodation(accomodationOptions, accomodationOptions.size(), folderPath + "accommodations.csv");
 			} catch (IOException e) {
 				System.out.println("Accommodation File does not exist!");
 			}
 			
 			try {
-				TripFileManager.saveTrips(trips, tripCount, folderPath + "trips.csv");
+				TripFileManager.saveTrips(trips, trips.size(), folderPath + "trips.csv");
 			} catch (IOException e) {
 				System.out.println("Trip File does not exist!");
 			}
@@ -861,27 +861,27 @@ import travel_package.Trip;
 		// It can not only throw an IOException which is why we must catch it in case the file does not exist, but also incorrect data. If the files have wrong inputs then they should not be loaded into the system
 		public static void LoadAllData(String folderPath) throws InvalidClientDataException, InvalidTransportDataException, InvalidAccommodationDataException, InvalidTripDataException {
 			try {
-				clientCount = ClientFileManager.loadClients(clients, clientCount, folderPath + "clients.csv");
+				ClientFileManager.loadClients(clients, clients.size(), folderPath + "clients.csv");
 				System.out.println("Loaded clients into the system!");
 			} catch (IOException e) {
 				System.out.println("Cannot find the file location for clients"); // Error-Logger
 			}
 			
 			try {
-				accomodationCount = AccommodationFileManager.loadAccommodation(accomodationOptions, accomodationCount, folderPath + "accommodations.csv");
+				AccommodationFileManager.loadAccommodation(accomodationOptions, accomodationOptions.size(), folderPath + "accommodations.csv");
 				System.out.println("Loaded accommodations into the system!");
 			} catch (IOException e) {
 				System.out.println("Cannot find the file location for accommodations"); // Error-Logger
 			}
 			
 			try {
-				transportCount = TransportationFileManager.loadTransportation(transportOptions, transportCount, folderPath + "transports.csv");
+				TransportationFileManager.loadTransportation(transportOptions, transportOptions.size(), folderPath + "transports.csv");
 				System.out.println("Loaded Transportations into the system!");
 			} catch (IOException e) {
 				System.out.println("Cannot find the file location for transportations"); // Error-Logger
 			}
 			try {
-				tripCount = TripFileManager.loadTrips(clients, clientCount, accomodationOptions, accomodationCount, transportOptions, transportCount, trips, tripCount, folderPath + "trips.csv");
+				TripFileManager.loadTrips(clients, clients.size(), accomodationOptions, accomodationOptions.size(), transportOptions, transportOptions.size(), trips, trips.size(), folderPath + "trips.csv");
 				System.out.println("Loaded Trips into the system!");
 			} catch (IOException e) {
 				System.out.println("Cannot find the file location for trips"); // Error-Logger

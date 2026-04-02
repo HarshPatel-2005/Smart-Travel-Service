@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import exceptions.InvalidTransportDataException;
 import travel_package.Transportation;
@@ -23,7 +24,7 @@ import travel_package.Train;
 
 public class TransportationFileManager {
 
-	public static void saveTransportation(Transportation[] transportation, int transportationCount, String filePath) throws IOException {
+	public static void saveTransportation(List<Transportation> transportOptions, int transportationCount, String filePath) throws IOException {
 		
 		File csvOutputFile = new File(filePath);
 		csvOutputFile.getParentFile().mkdirs();
@@ -35,28 +36,28 @@ public class TransportationFileManager {
 		else {
 			PrintWriter writer = new PrintWriter(new FileWriter(csvOutputFile));
 			
-			for(int i = 0; i < transportationCount; i++) {
+			for(Transportation t : transportOptions) {
 				
-				String transportType = transportation[i].getClass().getSimpleName();
+				String transportType = t.getClass().getSimpleName();
 				String capitalizedTransportType = transportType.toUpperCase();
 				
-				if(transportation[i].getClass().getSimpleName().equals("Flight")) {
-					Flight flight = (Flight) transportation[i];
+				if(t.getClass().getSimpleName().equals("Flight")) {
+					Flight flight = (Flight) t;
 					
-					writer.println(capitalizedTransportType + ";" + transportation[i].getTransportID() + ";" + transportation[i].getCompanyName() + ";" + transportation[i].getDepartureCity() + ";" + transportation[i].getArrivalCity()
-							+ ";" + transportation[i].calculateCost(0) + ";" + flight.getLuggageAllowance());
+					writer.println(capitalizedTransportType + ";" + t.getTransportID() + ";" + t.getCompanyName() + ";" + t.getDepartureCity() + ";" + t.getArrivalCity()
+							+ ";" + t.calculateCost(0) + ";" + flight.getLuggageAllowance());
 				}
-				else if(transportation[i].getClass().getSimpleName().equals("Train")){
-					Train train = (Train) transportation[i];
+				else if(t.getClass().getSimpleName().equals("Train")){
+					Train train = (Train) t;
 					
-					writer.println(capitalizedTransportType + ";" + transportation[i].getTransportID() + transportation[i].getCompanyName() + ";" + transportation[i].getDepartureCity() + ";" + transportation[i].getArrivalCity()
-							+ ";" + transportation[i].calculateCost(0) + ";" + train.getTrainType());
+					writer.println(capitalizedTransportType + ";" + t.getTransportID() + t.getCompanyName() + ";" + t.getDepartureCity() + ";" + t.getArrivalCity()
+							+ ";" + t.calculateCost(0) + ";" + train.getTrainType());
 				}
-				else if(transportation[i].getClass().getSimpleName().equals("Bus")){
-					Bus bus = (Bus) transportation[i];
+				else if(t.getClass().getSimpleName().equals("Bus")){
+					Bus bus = (Bus) t;
 					
-					writer.println(capitalizedTransportType + ";" + transportation[i].getTransportID() + transportation[i].getCompanyName() + ";" + transportation[i].getDepartureCity() + ";" + transportation[i].getArrivalCity()
-							+ ";" + transportation[i].calculateCost(0) + ";" + bus.getNumOfStops());
+					writer.println(capitalizedTransportType + ";" + t.getTransportID() + t.getCompanyName() + ";" + t.getDepartureCity() + ";" + t.getArrivalCity()
+							+ ";" + t.calculateCost(0) + ";" + bus.getNumOfStops());
 				}
 				else {
 					continue;
@@ -71,7 +72,7 @@ public class TransportationFileManager {
 		
 	}
 	
-	public static int loadTransportation(Transportation[] transportation, int transportationCount, String filePath) throws IOException, InvalidTransportDataException {
+	public static void loadTransportation(List<Transportation> transportOptions, int transportationCount, String filePath) throws IOException, InvalidTransportDataException {
 		
 		BufferedReader reader = new BufferedReader(new FileReader(filePath));
 		
@@ -110,15 +111,14 @@ public class TransportationFileManager {
 					throw new InvalidTransportDataException("InvalidTransportDataException: Unknown Transportation Type: " + content[0]);
 				}
 
-				transportation[transportationCount++] = currentTransportation;
+				transportOptions.add(currentTransportation);
 			} catch (InvalidTransportDataException e) {
 				ErrorLogger.logError("Transportation", line, e.getMessage());
 			}
 		}
 		
 		reader.close();
-		
-		return transportationCount;
+
 	}
 	
 }

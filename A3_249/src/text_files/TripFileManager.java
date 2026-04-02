@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import client_package.Client;
 import exceptions.EntityNotFoundException;
@@ -24,7 +25,7 @@ import travel_package.Trip;
 
 public class TripFileManager {
 
-	public static void saveTrips(Trip[] trips, int tripCount, String filePath) throws IOException {
+	public static void saveTrips(List<Trip> trips, int tripCount, String filePath) throws IOException {
 		
 		File csvOutputFile = new File(filePath);
 		csvOutputFile.getParentFile().mkdirs();
@@ -36,10 +37,10 @@ public class TripFileManager {
 		else {
 			PrintWriter writer = new PrintWriter(new FileWriter(csvOutputFile));
 			
-			for(int i = 0; i < tripCount; i++) {
-				writer.println(trips[i].getTripID() + ";" + trips[i].getClient().getClientID() + ";" + trips[i].getAccommodation().getAccommodationID() + ";" 
-						+ trips[i].getTransportation().getTransportID() + ";" + trips[i].getDestination() + ";" + trips[i].getDurationInDays() + ";" + 
-						trips[i].getBasePrice());
+			for(Trip tr : trips) {
+				writer.println(tr.getTripID() + ";" + tr.getClient().getClientID() + ";" + tr.getAccommodation().getAccommodationID() + ";" 
+						+ tr.getTransportation().getTransportID() + ";" + tr.getDestination() + ";" + tr.getDurationInDays() + ";" + 
+						tr.getBasePrice());
 			}
 			
 			writer.close();
@@ -49,7 +50,7 @@ public class TripFileManager {
 		
 	}
 	
-	public static int loadTrips(Client[] clients, int clientCount, Accommodation[] accomodationOptions, int accomodationCount, Transportation[] transportOptions, int transportCount, Trip[] trips, int tripCount, String filePath) throws IOException, InvalidTripDataException {
+	public static void loadTrips(List<Client> clients, int clientCount, List<Accommodation> accomodationOptions, int accomodationCount, List<Transportation> transportOptions, int transportCount, List<Trip> trips, int tripCount, String filePath) throws IOException, InvalidTripDataException {
 		
 		BufferedReader reader = new BufferedReader(new FileReader(filePath));
 		
@@ -88,24 +89,22 @@ public class TripFileManager {
 				
 				Trip trip = new Trip(content[0], content[4], duration, basePrice, client, transportation, accommodation);
 
-				trips[tripCount++] = trip;
+				trips.add(trip);
 			} catch (InvalidTripDataException | EntityNotFoundException e) {
 				ErrorLogger.logError("Trip", line, e.getMessage());
 			}
 		}
 
 		reader.close();
-		
-		return tripCount;
 	}
 	
 	// Helper Methods:
 	
-	private static Client findClientByID(String clientID, Client[] clients, int clientCount) { // Finds the client based on it's ID
+	private static Client findClientByID(String clientID, List<Client> clients, int clientCount) { // Finds the client based on it's ID
 		
-		for(int i = 0 ; i < clientCount; i++) {
-			if(clientID.equals(clients[i].getClientID())) {
-				return clients[i];
+		for(Client c : clients) {
+			if(clientID.equals(c.getClientID())) {
+				return c;
 			}
 		}
 		
@@ -113,21 +112,21 @@ public class TripFileManager {
 		
 	}
 	
-	private static boolean clientExists(String clientID, Client[] clients, int clientCount) { // Finds the client based on it's ID but uses to see if it exist
+	private static boolean clientExists(String clientID, List<Client> clients, int clientCount) { // Finds the client based on it's ID but uses to see if it exist
 		
-		for(int i = 0; i < clientCount; i++) {
-			if(clientID.equals(clients[i].getClientID())) {
+		for(Client c : clients) {
+			if(clientID.equals(c.getClientID())) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	private static Accommodation findAccommodationByID(String accommodationID, Accommodation[] accomodationOptions, int accommodationCount) { // Finds the accommodation based on it's ID
+	private static Accommodation findAccommodationByID(String accommodationID, List<Accommodation> accomodationOptions, int accommodationCount) { // Finds the accommodation based on it's ID
 		
-		for(int i = 0 ; i < accommodationCount; i++) {
-			if(accommodationID.equals(accomodationOptions[i].getAccommodationID())) {
-				return accomodationOptions[i];
+		for(Accommodation a : accomodationOptions) {
+			if(accommodationID.equals(a.getAccommodationID())) {
+				return a;
 			}
 		}
 		
@@ -135,10 +134,10 @@ public class TripFileManager {
 		
 	}
 	
-	private static boolean accommodationExists(String accommodationID, Accommodation[] accomodationOptions, int accommodationCount) { // Finds the accommodation based on it's ID but uses to see if it exist
+	private static boolean accommodationExists(String accommodationID, List<Accommodation> accomodationOptions, int accommodationCount) { // Finds the accommodation based on it's ID but uses to see if it exist
 		
-		for(int i = 0; i < accommodationCount; i++) {
-			if(accommodationID.equals(accomodationOptions[i].getAccommodationID())) {
+		for(Accommodation a : accomodationOptions) {
+			if(accommodationID.equals(a.getAccommodationID())) {
 				return true;
 			}
 		}
@@ -146,11 +145,11 @@ public class TripFileManager {
 		return false;
 	}
 	
-	private static Transportation findTransportationByID(String transportationID, Transportation[] transportOptions, int transportCount) { // Finds the transportation based on it's ID
+	private static Transportation findTransportationByID(String transportationID, List<Transportation> transportOptions, int transportCount) { // Finds the transportation based on it's ID
 		
-		for(int i = 0 ; i < transportCount; i++) {
-			if(transportationID.equals(transportOptions[i].getTransportID())) {
-				return transportOptions[i];
+		for(Transportation t : transportOptions) {
+			if(transportationID.equals(t.getTransportID())) {
+				return t;
 			}
 		}
 		
@@ -158,10 +157,10 @@ public class TripFileManager {
 		
 	}
 	
-	private static boolean transportationExists(String transportationID, Transportation[] transportOptions, int transportCount) { // Finds the transportation based on it's ID but uses to see if it exist
+	private static boolean transportationExists(String transportationID, List<Transportation> transportOptions, int transportCount) { // Finds the transportation based on it's ID but uses to see if it exist
 		
-		for(int i = 0; i < transportCount; i++) {
-			if(transportationID.equals(transportOptions[i].getTransportID())) {
+		for(Transportation t : transportOptions) {
+			if(transportationID.equals(t.getTransportID())) {
 				return true;
 			}
 		}

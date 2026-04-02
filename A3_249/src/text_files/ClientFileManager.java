@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import client_package.Client;
 import exceptions.DuplicateEmailException;
@@ -24,7 +25,7 @@ import exceptions.InvalidClientDataException;
 
 public class ClientFileManager {
 	
-	public static void saveClients(Client[] clients, int clientCount, String filePath) throws IOException {
+	public static void saveClients(List<Client> clients, int clientCount, String filePath) throws IOException {
 		
 		File csvOutputFile = new File(filePath);
 		csvOutputFile.getParentFile().mkdirs();
@@ -36,8 +37,8 @@ public class ClientFileManager {
 		else {
 			PrintWriter writer = new PrintWriter(new FileWriter(csvOutputFile));
 			
-			for(int i = 0; i < clientCount; i++) {
-				writer.println(clients[i].getClientID() + ";" + clients[i].getFirstName() + ";" + clients[i].getLastName() + ";" + clients[i].getEmail());
+			for(Client c : clients) {
+				writer.println(c.getClientID() + ";" + c.getFirstName() + ";" + c.getLastName() + ";" + c.getEmail());
 			}
 			
 			writer.close();
@@ -47,7 +48,7 @@ public class ClientFileManager {
 		
 	}
 	
-	public static int loadClients(Client[] clients, int clientCount, String filePath) throws IOException {
+	public static void loadClients(List<Client> clients, int clientCount, String filePath) throws IOException {
 	    BufferedReader reader = new BufferedReader(new FileReader(filePath));
 	    String line;
 
@@ -64,8 +65,8 @@ public class ClientFileManager {
 	            }
 
 	            boolean emailRepeat = false;
-	            for (int i = 0; i < clientCount; i++) {
-	                if (clients[i] != null && clients[i].getEmail().equalsIgnoreCase(content[3])) {
+	            for (Client c : clients) {
+	                if (c != null && c.getEmail().equalsIgnoreCase(content[3])) {
 	                    emailRepeat = true;
 	                    break;
 	                }
@@ -76,7 +77,7 @@ public class ClientFileManager {
 	            }
 
 	            Client client = new Client(content[0], content[1], content[2], content[3]);
-	            clients[clientCount++] = client;
+	            clients.add(client);
 
 	        } catch (InvalidClientDataException e) {
 	        	ErrorLogger.logError("Client", line, e.getMessage());
@@ -86,7 +87,6 @@ public class ClientFileManager {
 	    }
 
 	    reader.close();
-	    return clientCount;
 	}
 	
 	

@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import exceptions.InvalidAccommodationDataException;
 import travel_package.Accommodation;
@@ -24,7 +25,7 @@ import travel_package.Hostel;
 
 public class AccommodationFileManager {
 
-	public static void saveAccommodation(Accommodation[] accommodation, int accommodationCount, String filePath) throws IOException {
+	public static void saveAccommodation(List<Accommodation> accomodationOptions, int accommodationCount, String filePath) throws IOException {
 		
 		File csvOutputFile = new File(filePath); // Creates the file
 		csvOutputFile.getParentFile().mkdirs(); // Makes sure that the folder exist
@@ -36,22 +37,22 @@ public class AccommodationFileManager {
 		else {
 			PrintWriter writer = new PrintWriter(new FileWriter(csvOutputFile)); // Writes the information onto a file
 			
-			for(int i = 0; i < accommodationCount; i++) {
+			for(Accommodation a : accomodationOptions) {
 				
-				String accommodationType = accommodation[i].getClass().getSimpleName();
+				String accommodationType = a.getClass().getSimpleName();
 				String capitalizedAccommodationType = accommodationType.toUpperCase();
 				
 				if(accommodationType.equals("Hotel")) {
-					Hotel hotel = (Hotel) accommodation[i];
+					Hotel hotel = (Hotel) a;
 					
-					writer.println(capitalizedAccommodationType + ";" + accommodation[i].getAccommodationID() + ";" + accommodation[i].getName()
-							+ ";" + accommodation[i].getLocation() + ";" + accommodation[i].getPricePerNight() + ";" + hotel.getStarRating());
+					writer.println(capitalizedAccommodationType + ";" + a.getAccommodationID() + ";" + a.getName()
+							+ ";" + a.getLocation() + ";" + a.getPricePerNight() + ";" + hotel.getStarRating());
 				}
 				else {
-					Hostel hostel = (Hostel) accommodation[i];
+					Hostel hostel = (Hostel) a;
 					
-					writer.println(capitalizedAccommodationType + ";" + accommodation[i].getAccommodationID() + ";" + accommodation[i].getName()
-							+ ";" + accommodation[i].getLocation() + ";" + accommodation[i].getPricePerNight() + ";" + hostel.getNumOfSharedBeds());
+					writer.println(capitalizedAccommodationType + ";" + a.getAccommodationID() + ";" + a.getName()
+							+ ";" + a.getLocation() + ";" + a.getPricePerNight() + ";" + hostel.getNumOfSharedBeds());
 				}
 			}
 			
@@ -63,7 +64,7 @@ public class AccommodationFileManager {
 		
 	}
 	
-	public static int loadAccommodation(Accommodation[] accommodation, int accommodationCount, String filePath) throws IOException, InvalidAccommodationDataException {
+	public static void loadAccommodation(List<Accommodation> accomodationOptions, int accommodationCount, String filePath) throws IOException, InvalidAccommodationDataException {
 		
 		BufferedReader reader = new BufferedReader(new FileReader(filePath)); // Reader variable to read the information from a file
 		
@@ -97,7 +98,7 @@ public class AccommodationFileManager {
 					throw new InvalidAccommodationDataException("InvalidAccommodationDataException: Unknown Accommodation Type: " + content[0]);
 				}
 
-				accommodation[accommodationCount++] = currentAccommodation;
+				accomodationOptions.add(currentAccommodation);
 			} catch (InvalidAccommodationDataException e) {
 				ErrorLogger.logError("Accommodation", line, e.getMessage());
 			}
@@ -105,7 +106,6 @@ public class AccommodationFileManager {
 		
 		reader.close(); // Avoids leaking resources
 		
-		return accommodationCount;
 	}
 	
 }
