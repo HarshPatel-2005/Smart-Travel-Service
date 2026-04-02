@@ -5,8 +5,8 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="A2_249/src"/>
-	<classpathentry kind="lib" path="A2_249/lib/jcommon-1.0.24.jar"/>
-	<classpathentry kind="lib" path="A2_249/lib/jfreechart-1.5.6.jar"/>
+	<classpathentry kind="src" path="A3_249/src"/>
+	<classpathentry kind="lib" path="A3_249/lib/jcommon-1.0.24.jar"/>
+	<classpathentry kind="lib" path="A3_249/lib/jfreechart-1.5.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
