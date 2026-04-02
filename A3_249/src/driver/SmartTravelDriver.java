@@ -20,7 +20,7 @@ public class SmartTravelDriver {
     private static Scanner input = new Scanner(System.in);
     
     static SmartTravelService service = new SmartTravelService(input);
-
+    // Test
     // Main method
     public static void main(String[] args) {
         int mainChoice = 0;
