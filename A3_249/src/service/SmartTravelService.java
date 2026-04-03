@@ -804,27 +804,35 @@ import travel_package.Trip;
 	    // Copy Arrays (FOR USAGE) 
 	    // These two are overwriting the other two methods since this one is not taking any parameters so that in the driver we can use this without concern
 	    
-	    public Transportation[] copyTransportArray() {
-	        Transportation[] copyArray = new Transportation[transportCount];
-	        if (transportOptions.length == 0) { 
+	    public List<Transportation> copyTransportArray() {
+	        List<Transportation> copyArray = new ArrayList<>(transportOptions.size());
+	        if (transportOptions.size() == 0) { 
 	        	System.out.println("Nothing to copy! Returning to menu!"); }
 	        else {
-	            for (int i = 0; i < transportOptions.length; i++) {
-	                if (transportOptions[i] != null) copyArray[i] = transportOptions[i].copy();
+	            for (Transportation t : transportOptions) {
+	                if (t != null) 
+	                	copyArray.add(t.copy());
 	            }
 	        }
+	        
+	        System.out.println("Transportation Array Copied!");
+	        
 	        return copyArray;
 	    }
 
-	    public Accommodation[] copyAccommodationArray() {
-	        Accommodation[] copyArray = new Accommodation[accomodationCount];
-	        if (accomodationOptions.length == 0) { 
+	    public List<Accommodation> copyAccommodationArray() {
+	    	List<Accommodation> copyArray = new ArrayList<>(accomodationOptions.size());
+	        if (accomodationOptions.size() == 0) { 
 	        	System.out.println("Nothing to copy! Returning to menu!"); }
 	        else {
-	            for (int i = 0; i < accomodationOptions.length; i++) {
-	                if (accomodationOptions[i] != null) copyArray[i] = accomodationOptions[i].copy();
+	            for (Accommodation a : accomodationOptions) {
+	                if (a != null) 
+	                	copyArray.add(a.copy());
 	            }
 	        }
+	        
+	        System.out.println("Accommodation Array Copied!");
+	        
 	        return copyArray;
 	    }
 	    
