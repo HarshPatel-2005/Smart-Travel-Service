@@ -37,7 +37,7 @@ public class SmartTravelDriver {
         if (userChoicePriorStart == 2) {
         	service.predefinedScenario();
         } else {
-            while (mainChoice != 6) {
+            while (mainChoice != 8) {
                 mainChoice = runMainMenu();
                 runSubMenu(mainChoice);
             }
@@ -64,7 +64,8 @@ public class SmartTravelDriver {
         System.out.println("4. Accomodation Management");
         System.out.println("5. Additional Operations");
         System.out.println("6. Generate Dashboard");
-        System.out.println("7. Exit");
+        System.out.println("7. Advanced Analytics");
+        System.out.println("8. Exit");
         System.out.print("Your choice: ");
         int mainChoice = input.nextInt();
         input.nextLine();
@@ -190,8 +191,32 @@ public class SmartTravelDriver {
 					e.printStackTrace();
 				}
             	break;
-                
+            	
             case 7:
+            	System.out.println("\nWhat would you like to do?");
+            	System.out.println("1. Trips by Destination");
+            	System.out.println("2. Trips by Cost Range");
+            	System.out.println("3. Top Clients By Spending");
+            	System.out.println("4. Recent Trips");
+            	System.out.println("5. Smart Sort Collections");
+            	System.out.println("6. Back to Main Menu");
+            	System.out.print("Enter your choice: ");
+            	choice = input.nextInt();
+            	input.nextLine();
+            	
+            	switch(choice) {
+            		case 1:
+            		case 2:
+            		case 3:
+            		case 4:
+            		case 5:
+            		case 6:
+            		case 7: System.out.println("Returning to Main Menu!"); return;
+            		default: System.out.println("Invalid Choice!"); break;
+            	}
+            	
+                break;
+            case 8:
                 System.out.print("Thank you for using the Smart Travel Software!");
                 break;
 
