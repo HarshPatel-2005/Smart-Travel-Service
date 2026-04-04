@@ -148,15 +148,15 @@ public class DashboardGenerator {
             int tripCount = service.getTripCount();
             
             for(Trip tr : trips) {
-            	if(tr.getClient().getClientID().equalsIgnoreCase(client.getClientID())) {
-            		spent += tr.calculateTotalCost();
+            	if(tr.getClient().getID().equalsIgnoreCase(client.getID())) {
+            		spent += tr.getTotalCost();
             	}
             }
             
             client.addAmountSpent(spent);
             
             out.println("                    <tr>");
-            out.println("                        <td><strong>" + client.getClientID() + "</strong></td>");
+            out.println("                        <td><strong>" + client.getID() + "</strong></td>");
             out.println("                        <td>" + client.getFirstName() + " " + client.getLastName() + "</td>");
             out.println("                        <td>" + client.getEmail() + "</td>");
             out.println("                        <td style='font-weight: bold; color: " + 
@@ -189,8 +189,8 @@ public class DashboardGenerator {
         for (int i = 0; i < service.getTripCount(); i++) {
             Trip trip = service.getTrip(i);
             out.println("                    <tr>");
-            out.println("                        <td><strong>" + trip.getTripID() + "</strong></td>");
-            out.println("                        <td>" + trip.getClient().getClientID() + "</td>");
+            out.println("                        <td><strong>" + trip.getID() + "</strong></td>");
+            out.println("                        <td>" + trip.getClient().getID() + "</td>");
             out.println("                        <td>" + trip.getDestination() + "</td>");
             out.println("                        <td>" + trip.getDurationInDays() + "</td>");
             out.println("                        <td>$" + String.format("%.2f", service.calculateTripTotal(trip)) + "</td>");
@@ -252,7 +252,7 @@ public class DashboardGenerator {
         List<Trip> trips = service.getAllTrips();
         
 		for(Trip tr : trips) {
-			totalRevenue += tr.calculateTotalCost();
+			totalRevenue += tr.getTotalCost();
 		}
 		
 		double avgCost = (totalRevenue/tripCount);

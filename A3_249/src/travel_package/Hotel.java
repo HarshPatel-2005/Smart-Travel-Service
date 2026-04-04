@@ -36,7 +36,7 @@ public class Hotel extends Accommodation {
         setStarRating(hotel.starRating);
     }
 
-    // Methods
+    // METHODS //
     @Override
     public double calculateCost(int numOfDays) {
         double regularPrice = getPricePerNight() * numOfDays;
@@ -67,8 +67,36 @@ public class Hotel extends Accommodation {
             return null;
         }
     }
+    
+    @Override
+	public String toCsvRow() { // CsvPersistable Interface method inside of this class because accommodation does not have access to subclass variables
+		return this.getClass().getSimpleName().toUpperCase() + ";" + super.getID() + ";" + super.getName() + ";" + super.getLocation() + ";" + super.getPricePerNight() + ";" + this.getStarRating();
+	}
+    
+    public static Accommodation fromCsvRow(String csvLine) throws InvalidAccommodationDataException {
+		
+		Accommodation a = null;
 
-    // Getters and Setters
+        String[] content = csvLine.split(";");	
+
+        if(content.length != 6) { // The array must contain 6 columns of data otherwise it's invalid
+			throw new InvalidAccommodationDataException("InvalidAccommodationDataException: Invalid number of columns.");
+		}
+		
+		if(content[1] == null || content[1].isEmpty() || content[1].charAt(0) != 'A') { // Accommodation ID always starts with an A hence it should be otherwise it won't be loaded
+			throw new InvalidAccommodationDataException("InvalidAccommodationDataException: Incorrect Accommodation ID");
+		}
+		
+		double pricePerNight = Double.valueOf(content[4]);
+		int starRating = Integer.valueOf(content[5]); 
+
+        a = new Hotel(content[1], content[2], content[3], pricePerNight, starRating);
+
+		return a;
+		
+	}
+
+    // GETTERS AND SETTERS //
     public int getStarRating() {  
         return starRating;
     }

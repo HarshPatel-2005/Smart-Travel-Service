@@ -47,7 +47,8 @@ public class Flight extends Transportation {
         this.ticketPrice = flight.ticketPrice;
     }
 
-    // Methods
+    // METHODS //
+    
     @Override
     public double calculateCost(int numOfDays) {
         return ticketPrice;
@@ -76,8 +77,37 @@ public class Flight extends Transportation {
             return null;
         }
     }
+    
+    @Override
+	public String toCsvRow() { // CsvPersistable Interface method inside of this class because accommodation does not have access to subclass variables
+		return this.getClass().getSimpleName().toUpperCase() + ";" + super.getID() + ";" + super.getCompanyName() + ";" + super.getDepartureCity() + ";" + super.getArrivalCity()
+		+ ";" + calculateCost(0) + ";" + this.getLuggageAllowance();
+	}
+    
+    public static Transportation fromCsvRow(String csvLine) throws InvalidTransportDataException {
+		
+    	Transportation t = null;
 
-    // Getters and Setters
+        String[] content = csvLine.split(";");	
+
+        if(content.length != 7) {
+			throw new InvalidTransportDataException("InvalidTransportDataException: Invalid number of columns");
+		}
+		
+		if(content[1] == null || content[1].isEmpty() || !content[1].substring(0, 2).equals("TR")) {
+			throw new InvalidTransportDataException("InvalidTransportDataException: Incorrect Transportation ID: " + content[1]);
+		}
+		
+		double luggage = Double.parseDouble(content[6]);
+		double price = Double.parseDouble(content[5]);
+		t = new Flight(content[1], "Expedia", content[3], content[4], content[2], luggage, price);
+
+		return t;
+		
+	}
+
+    // GETTERS AND SETTERS //
+    
     public String getAirlineName() {
         return airlineName;
     }

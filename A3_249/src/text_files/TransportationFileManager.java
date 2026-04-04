@@ -44,19 +44,19 @@ public class TransportationFileManager {
 				if(t.getClass().getSimpleName().equals("Flight")) {
 					Flight flight = (Flight) t;
 					
-					writer.println(capitalizedTransportType + ";" + t.getTransportID() + ";" + t.getCompanyName() + ";" + t.getDepartureCity() + ";" + t.getArrivalCity()
+					writer.println(capitalizedTransportType + ";" + t.getID() + ";" + t.getCompanyName() + ";" + t.getDepartureCity() + ";" + t.getArrivalCity()
 							+ ";" + t.calculateCost(0) + ";" + flight.getLuggageAllowance());
 				}
 				else if(t.getClass().getSimpleName().equals("Train")){
 					Train train = (Train) t;
 					
-					writer.println(capitalizedTransportType + ";" + t.getTransportID() + t.getCompanyName() + ";" + t.getDepartureCity() + ";" + t.getArrivalCity()
+					writer.println(capitalizedTransportType + ";" + t.getID() + t.getCompanyName() + ";" + t.getDepartureCity() + ";" + t.getArrivalCity()
 							+ ";" + t.calculateCost(0) + ";" + train.getTrainType());
 				}
 				else if(t.getClass().getSimpleName().equals("Bus")){
 					Bus bus = (Bus) t;
 					
-					writer.println(capitalizedTransportType + ";" + t.getTransportID() + t.getCompanyName() + ";" + t.getDepartureCity() + ";" + t.getArrivalCity()
+					writer.println(capitalizedTransportType + ";" + t.getID() + t.getCompanyName() + ";" + t.getDepartureCity() + ";" + t.getArrivalCity()
 							+ ";" + t.calculateCost(0) + ";" + bus.getNumOfStops());
 				}
 				else {

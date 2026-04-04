@@ -38,7 +38,7 @@ public class ClientFileManager {
 			PrintWriter writer = new PrintWriter(new FileWriter(csvOutputFile));
 			
 			for(Client c : clients) {
-				writer.println(c.getClientID() + ";" + c.getFirstName() + ";" + c.getLastName() + ";" + c.getEmail());
+				writer.println(c.getID() + ";" + c.getFirstName() + ";" + c.getLastName() + ";" + c.getEmail());
 			}
 			
 			writer.close();

@@ -47,7 +47,8 @@ public class Bus extends Transportation {
         this.ticketPrice = bus.ticketPrice;
     }
 
-    // Methods
+    // METHODS //
+    
     @Override
     public double calculateCost(int numOfDays) {
         return ticketPrice;
@@ -66,8 +67,37 @@ public class Bus extends Transportation {
         Bus bus = (Bus) obj;
         return (this.busCompany.equals(bus.busCompany)) && (this.numOfStops == bus.numOfStops);
     }
+    
+    @Override
+   	public String toCsvRow() { // CsvPersistable Interface method inside of this class because accommodation does not have access to subclass variables
+   		return this.getClass().getSimpleName().toUpperCase() + ";" + super.getID() + ";" + super.getCompanyName() + ";" + super.getDepartureCity() + ";" + super.getArrivalCity()
+   		+ ";" + calculateCost(0) + ";" + this.getNumOfStops();
+   	}
+       
+       public static Transportation fromCsvRow(String csvLine) throws InvalidTransportDataException {
+   		
+       	Transportation t = null;
 
-    // Getters and Setters
+           String[] content = csvLine.split(";");	
+
+           if(content.length != 7) {
+   			throw new InvalidTransportDataException("InvalidTransportDataException: Invalid number of columns");
+   		}
+   		
+   		if(content[1] == null || content[1].isEmpty() || !content[1].substring(0, 2).equals("TR")) {
+   			throw new InvalidTransportDataException("InvalidTransportDataException: Incorrect Transportation ID: " + content[1]);
+   		}
+   		
+   		int numOfStops = Integer.parseInt(content[6]);
+		double price = Double.parseDouble(content[5]);
+		t = new Bus(content[1], "Expedia", content[3], content[4], content[2], numOfStops, price);
+
+   		return t;
+   		
+   	}
+
+    // GETTERS AND SETTERS //
+    
     public String getBusCompany() {
         return busCompany;
     }

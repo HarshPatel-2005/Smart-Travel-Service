@@ -1,9 +1,11 @@
 package travel_package;
 import exceptions.*;
+import interfaces.Billable;
+import interfaces.CsvPersistable;
 // Assignment 1
 // Question: Smart Travel Agency
 // Written by: Harsh Patel (40341498) and Pratik Patel (40330468)
-
+import interfaces.Identifiable;
 import client_package.Client;
 
 //Assignment 3
@@ -14,7 +16,7 @@ import client_package.Client;
 //This assignment is meant to add onto the first one by adding persistence, which is to save and load data in order to make programs that retain memory. It will also work on making sure that certain inputs are correctly
 //written and that it won't crash if it is not
 
-public class Trip {
+public class Trip implements Identifiable, Billable, CsvPersistable, Comparable<Trip>{
 
     private String tripID;
     private String destination;
@@ -80,16 +82,80 @@ public class Trip {
         this.accommodation = trip.accommodation;
     }
 
-    // Methods
+    // METHODS //
 
-    public double calculateTotalCost() {
+    @Override
+    public double getTotalCost() { // Interface method to get total cost of everything
         double totalCost = this.basePrice + transportation.calculateCost(this.duration) + accommodation.calculateCost(this.duration);
         return totalCost;
     }
+    
+ // toString method
+    @Override
+    public String toString() {
+        return "\nTrip ID: " + tripID + "\nDestination: " + destination + "\nDuration: " + duration + " days, \nBase Price: $" + basePrice + "\nClient ID: " + client.getID() + "\nTransportID: " + transportation.getID() + "\nAccommodation ID: " + accommodation.getID();
+    }
 
-    // Getters and Setters
+    // equals method
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        Trip trip = (Trip) obj;
+        return (this.destination.equals(trip.destination))
+                && (this.duration == trip.duration)
+                && (this.basePrice == trip.basePrice)
+                && (this.client == trip.client)
+                && (this.transportation == trip.transportation)
+                && (this.accommodation == trip.accommodation);
+    }
 
-    public String getTripID() {
+    @Override
+	public int compareTo(Trip o) { // Comparable Interface Method
+		if(o.getTotalCost() > this.getTotalCost())
+			return 1;
+		else if(o.getTotalCost() == this.getTotalCost())
+			return 0;
+		else
+			return -1;
+	} 
+
+	@Override
+	public String toCsvRow() { // CsvPersistable Interface method
+		return this.getID() + ";" + this.getClient().getID() + ";" + this.getAccommodation().getID() + ";" 
+				+ this.getTransportation().getID() + ";" + this.getDestination() + ";" + this.getDurationInDays() + ";" + 
+				this.getBasePrice();
+	}
+	
+	public static Trip fromCsvRow(String csvLine) throws InvalidTripDataException {
+		
+		String[] content = csvLine.split(";");
+		
+		if(content.length != 7) {
+			throw new InvalidTripDataException("InvalidTripDataException: Invalid number of columns");
+		}
+		
+		if(content[0] == null || content[0].isEmpty() || content[0].charAt(0) != 'T') {
+			throw new InvalidTripDataException("InvalidTripDataException: Incorrect Trip ID: " + content[0]);
+		}
+		
+		int duration = Integer.valueOf(content[5]);
+		double basePrice = Double.valueOf(content[6]);
+		
+		Trip trip = new Trip(content[0], content[4], duration, basePrice, null, null, null); // The trip currently does not pay attention to the client, accommodation nor the transportation as we're simply converting the
+
+		return trip;
+		
+	}
+
+    // GETTERS AND SETTERS //
+
+    @Override
+    public String getID() { // Interface method to get the ID
         return tripID;
     }
 
@@ -119,7 +185,8 @@ public class Trip {
         this.duration = duration;
     }
 
-    public double getBasePrice() {
+    @Override
+    public double getBasePrice() { // Interface Method to get the base price of the trip
         return basePrice;
     }
 
@@ -154,27 +221,4 @@ public class Trip {
         this.accommodation = accommodation;
     }
 
-    // toString method
-    @Override
-    public String toString() {
-        return "\nTrip ID: " + tripID + "\nDestination: " + destination + "\nDuration: " + duration + " days, \nBase Price: $" + basePrice + "\nClient ID: " + client.getClientID() + "\nTransportID: " + transportation.getTransportID() + "\nAccommodation ID: " + accommodation.getAccommodationID();
-    }
-
-    // equals method
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (this.getClass() != obj.getClass()) {
-            return false;
-        }
-        Trip trip = (Trip) obj;
-        return (this.destination.equals(trip.destination))
-                && (this.duration == trip.duration)
-                && (this.basePrice == trip.basePrice)
-                && (this.client == trip.client)
-                && (this.transportation == trip.transportation)
-                && (this.accommodation == trip.accommodation);
-    }
 }

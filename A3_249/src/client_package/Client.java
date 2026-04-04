@@ -1,5 +1,7 @@
 package client_package;
 import exceptions.*;
+import interfaces.CsvPersistable;
+import interfaces.Identifiable;
 
 //Assignment 3
 //Question: Smart Travel Agency
@@ -12,7 +14,7 @@ import exceptions.*;
 // The client class is where the creation of the client happens. Within this assignment, we are now tasked to verify that the user has input valid inputs and if not, rather than crashing the client we simply create
 // an exception to handle it and let the user know that is not possible and send them back to the start
 
-public class Client {
+public class Client implements Identifiable, CsvPersistable, Comparable<Client>{
     private String clientID;
     private String firstName;
     private String lastName;
@@ -61,9 +63,78 @@ public class Client {
         setEmail(other.email);
         counter++;
     }
+    
+    // METHODS //
+    
+    public void addAmountSpent(double amountSpent) {
+	    this.amountSpent = amountSpent;
+	}
 
-    // Getters and Setters
-    public String getClientID() {
+	@Override
+	public int compareTo(Client o) { // Comparable Interface Method
+		
+		if(o.amountSpent > this.amountSpent)
+			return 1;
+		else if(o.amountSpent == this.amountSpent)
+			return 0;
+		else
+			return -1;
+		
+	}
+
+	@Override
+	public String toCsvRow() { // CsvPersistable Interface method
+		return this.getID() + ";" + this.getFirstName() + ";" + this.getLastName() + ";" + this.getEmail();
+	}
+	
+	public static Client fromCsvRow(String csvLine) throws InvalidClientDataException {
+		
+		Client client = null;
+
+        String[] content = csvLine.split(";");
+
+        if (content.length != 4) { // Exception if there aren't enough contents in the line
+            throw new InvalidClientDataException("InvalidClientDataException: Invalid number of columns.");
+        }
+
+        if (content[0] == null || content[0].isEmpty() || content[0].charAt(0) != 'C') { // Exception if the ID is incorrect
+            throw new InvalidClientDataException("InvalidClientDataException: Invalid client ID: " + content[0]);
+        }
+
+        client = new Client(content[0], content[1], content[2], content[3]); // The client currently does not pay attention to the email duplication as it will be compared and handled elsewhere.
+
+		return client;
+		
+	}
+	
+	// toString method
+    @Override
+    public String toString() {
+        return "Client ID: " + this.clientID + ", Name: " + this.firstName + " " + this.lastName + ", Email: " + this.email;
+    }
+
+    // equals method
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        Client other = (Client) obj;
+        return this.firstName.equals(other.firstName) && this.lastName.equals(other.lastName) && this.email.equals(other.email);
+    }
+    
+    // These two methods will be used to calculate how much each client has spent as they can have multiple trips
+	public double getTotalSpent() {
+	    return amountSpent;
+	}
+
+    // GETTERS AND SETTERS //
+    
+    @Override
+    public String getID() { // Identifiable Interface Method
         return this.clientID;
     }
 
@@ -125,31 +196,4 @@ public class Client {
         this.email = email;
     }
 
-    // toString method
-    @Override
-    public String toString() {
-        return "Client ID: " + this.clientID + ", Name: " + this.firstName + " " + this.lastName + ", Email: " + this.email;
-    }
-
-    // equals method
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (this.getClass() != obj.getClass()) {
-            return false;
-        }
-        Client other = (Client) obj;
-        return this.firstName.equals(other.firstName) && this.lastName.equals(other.lastName) && this.email.equals(other.email);
-    }
-    
-    // These two methods will be used to calculate how much each client has spent as they can have multiple trips
-	public double getTotalSpent() {
-	    return amountSpent;
-	}
-	
-	public void addAmountSpent(double amountSpent) {
-	    this.amountSpent = amountSpent;
-	}
 }

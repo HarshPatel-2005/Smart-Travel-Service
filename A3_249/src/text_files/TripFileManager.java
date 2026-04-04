@@ -38,8 +38,8 @@ public class TripFileManager {
 			PrintWriter writer = new PrintWriter(new FileWriter(csvOutputFile));
 			
 			for(Trip tr : trips) {
-				writer.println(tr.getTripID() + ";" + tr.getClient().getClientID() + ";" + tr.getAccommodation().getAccommodationID() + ";" 
-						+ tr.getTransportation().getTransportID() + ";" + tr.getDestination() + ";" + tr.getDurationInDays() + ";" + 
+				writer.println(tr.getID() + ";" + tr.getClient().getID() + ";" + tr.getAccommodation().getID() + ";" 
+						+ tr.getTransportation().getID() + ";" + tr.getDestination() + ";" + tr.getDurationInDays() + ";" + 
 						tr.getBasePrice());
 			}
 			
@@ -103,7 +103,7 @@ public class TripFileManager {
 	private static Client findClientByID(String clientID, List<Client> clients, int clientCount) { // Finds the client based on it's ID
 		
 		for(Client c : clients) {
-			if(clientID.equals(c.getClientID())) {
+			if(clientID.equals(c.getID())) {
 				return c;
 			}
 		}
@@ -115,7 +115,7 @@ public class TripFileManager {
 	private static boolean clientExists(String clientID, List<Client> clients, int clientCount) { // Finds the client based on it's ID but uses to see if it exist
 		
 		for(Client c : clients) {
-			if(clientID.equals(c.getClientID())) {
+			if(clientID.equals(c.getID())) {
 				return true;
 			}
 		}
@@ -125,7 +125,7 @@ public class TripFileManager {
 	private static Accommodation findAccommodationByID(String accommodationID, List<Accommodation> accomodationOptions, int accommodationCount) { // Finds the accommodation based on it's ID
 		
 		for(Accommodation a : accomodationOptions) {
-			if(accommodationID.equals(a.getAccommodationID())) {
+			if(accommodationID.equals(a.getID())) {
 				return a;
 			}
 		}
@@ -137,7 +137,7 @@ public class TripFileManager {
 	private static boolean accommodationExists(String accommodationID, List<Accommodation> accomodationOptions, int accommodationCount) { // Finds the accommodation based on it's ID but uses to see if it exist
 		
 		for(Accommodation a : accomodationOptions) {
-			if(accommodationID.equals(a.getAccommodationID())) {
+			if(accommodationID.equals(a.getID())) {
 				return true;
 			}
 		}
@@ -148,7 +148,7 @@ public class TripFileManager {
 	private static Transportation findTransportationByID(String transportationID, List<Transportation> transportOptions, int transportCount) { // Finds the transportation based on it's ID
 		
 		for(Transportation t : transportOptions) {
-			if(transportationID.equals(t.getTransportID())) {
+			if(transportationID.equals(t.getID())) {
 				return t;
 			}
 		}
@@ -160,7 +160,7 @@ public class TripFileManager {
 	private static boolean transportationExists(String transportationID, List<Transportation> transportOptions, int transportCount) { // Finds the transportation based on it's ID but uses to see if it exist
 		
 		for(Transportation t : transportOptions) {
-			if(transportationID.equals(t.getTransportID())) {
+			if(transportationID.equals(t.getID())) {
 				return true;
 			}
 		}

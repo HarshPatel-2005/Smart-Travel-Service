@@ -1,5 +1,8 @@
 package travel_package;
+import client_package.Client;
 import exceptions.*;
+import interfaces.CsvPersistable;
+import interfaces.Identifiable;
 
 //Assignment 3
 //Question: Smart Travel Agency
@@ -9,7 +12,7 @@ import exceptions.*;
 //This assignment is meant to add onto the first one by adding persistence, which is to save and load data in order to make programs that retain memory. It will also work on making sure that certain inputs are correctly
 //written and that it won't crash if it is not
 
-public abstract class Transportation {
+public abstract class Transportation implements Identifiable, CsvPersistable, Comparable<Transportation>{
 
     private String transportID;
     private String companyName;
@@ -51,9 +54,12 @@ public abstract class Transportation {
         setArrivalCity(transportation.arrivalCity);
         counter++;
     }
+    
+    // METHODS //
 
     // Abstract methods
     public abstract double calculateCost(int numOfDays);
+    
     public abstract Transportation copy();
 
     // toString method
@@ -76,9 +82,23 @@ public abstract class Transportation {
                 && (this.departureCity.equals(transportation.departureCity))
                 && (this.arrivalCity.equals(transportation.arrivalCity));
     }
+    
+    @Override
+	public int compareTo(Transportation o) { // Comparable Interface Method
+		
+		if(o.calculateCost(0) > this.calculateCost(0))
+			return 1;
+		else if(o.calculateCost(0) == this.calculateCost(0))
+			return 0;
+		else
+			return -1;
+		
+	}
 
-    // Getters and Setters
-    public String getTransportID() {
+    // GETTERS AND SETTERS //
+    
+    @Override
+    public String getID() {
         return transportID;
     }
 
@@ -118,4 +138,5 @@ public abstract class Transportation {
         }
         this.arrivalCity = arrivalCity;
     }
+    
 }

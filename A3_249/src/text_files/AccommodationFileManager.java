@@ -45,13 +45,13 @@ public class AccommodationFileManager {
 				if(accommodationType.equals("Hotel")) {
 					Hotel hotel = (Hotel) a;
 					
-					writer.println(capitalizedAccommodationType + ";" + a.getAccommodationID() + ";" + a.getName()
+					writer.println(capitalizedAccommodationType + ";" + a.getID() + ";" + a.getName()
 							+ ";" + a.getLocation() + ";" + a.getPricePerNight() + ";" + hotel.getStarRating());
 				}
 				else {
 					Hostel hostel = (Hostel) a;
 					
-					writer.println(capitalizedAccommodationType + ";" + a.getAccommodationID() + ";" + a.getName()
+					writer.println(capitalizedAccommodationType + ";" + a.getID() + ";" + a.getName()
 							+ ";" + a.getLocation() + ";" + a.getPricePerNight() + ";" + hostel.getNumOfSharedBeds());
 				}
 			}

@@ -24,6 +24,7 @@ import exceptions.InvalidTransportDataException;
 import exceptions.InvalidTripDataException;
 import text_files.AccommodationFileManager;
 import text_files.ClientFileManager;
+import text_files.GenericFileManager;
 import text_files.TransportationFileManager;
 import text_files.TripFileManager;
 import travel_package.Accommodation;
@@ -80,7 +81,7 @@ import travel_package.Trip;
 	            
 	            Client newClient = new Client(firstName, lastName, email);
 	            clients.add(newClient);
-	            System.out.println("Client added successfully! \nClient ID: " + newClient.getClientID());
+	            System.out.println("Client added successfully! \nClient ID: " + newClient.getID());
 	            
 	        } catch (InvalidClientDataException e) {
 	            System.out.println("Error: Invalid client data. " + e.getMessage()); // If the data is incorrect, it catches InvalidClientDataException 
@@ -99,14 +100,14 @@ import travel_package.Trip;
 	        try {
 				System.out.print("What client would you like to edit? (Enter Client ID): ");
 				for (Client c : clients) 
-					System.out.print("\nClient ID: " + c.getClientID());
+					System.out.print("\nClient ID: " + c.getID());
 				
 				System.out.print("\nClient ID choice: ");
 				String clientID = input.nextLine();
 
 				Client clientToEdit = null;
 				for (Client c : clients) {
-				    if (c.getClientID().equalsIgnoreCase(clientID)) { 
+				    if (c.getID().equalsIgnoreCase(clientID)) { 
 				    	clientToEdit = c; 
 				    	break; 
 				    }
@@ -175,14 +176,14 @@ import travel_package.Trip;
 	        try {
 				System.out.print("What client would you like to delete? (Enter Client ID) ");
 				for (Client c : clients) 
-					System.out.print("\nClient ID: " + c.getClientID());
+					System.out.print("\nClient ID: " + c.getID());
 				
 				System.out.print("\nClient ID choice: ");
 				String clientID = input.nextLine();
 
 				Client clientToDelete = null;
 				for (Client c : clients) {
-				    if (c.getClientID().equalsIgnoreCase(clientID)) { 
+				    if (c.getID().equalsIgnoreCase(clientID)) { 
 				    	clientToDelete = c; 
 				    	break; 
 				    }
@@ -233,14 +234,14 @@ import travel_package.Trip;
 	            System.out.print("\nAvailable Client Options:");
 	            
 	            for (Client c : clients) 
-	            	System.out.print("\nClient ID: " + c.getClientID());
+	            	System.out.print("\nClient ID: " + c.getID());
 	            
 	            System.out.print("\nClient ID choice: ");
 	            String clientID = input.nextLine();
 
 	            Client clientToCompare = null;
 	            for (Client c : clients) {
-	                if (c.getClientID().equalsIgnoreCase(clientID)) { 
+	                if (c.getID().equalsIgnoreCase(clientID)) { 
 	                	clientToCompare = c; 
 	                	break; 
 	                }
@@ -256,14 +257,14 @@ import travel_package.Trip;
 	            
 	            System.out.println("\nAvailable transportation options:");
 	            for (Transportation t : transportOptions) 
-	            	System.out.println("Transportation ID: " + t.getTransportID());
+	            	System.out.println("Transportation ID: " + t.getID());
 	            
 	            System.out.print("Choice: ");
 	            String transportID = input.nextLine();
 
 	            Transportation selectedTransport = null;
 	            for (Transportation t : transportOptions) {
-	                if (t.getTransportID().equalsIgnoreCase(transportID)) { 
+	                if (t.getID().equalsIgnoreCase(transportID)) { 
 	                	selectedTransport = t; 
 	                	break; 
 	                }
@@ -279,14 +280,14 @@ import travel_package.Trip;
 	            
 	            System.out.print("\nAvailable accommodation options:");
 	            for (Accommodation a : accomodationOptions) 
-	            	System.out.print("\nAccommodation ID: " + a.getAccommodationID());
+	            	System.out.print("\nAccommodation ID: " + a.getID());
 	            
 	            System.out.print("\nChoice: ");
 	            String accomodationID = input.nextLine();
 
 	            Accommodation selectedAccomodation = null;
 	            for (Accommodation a : accomodationOptions) {
-	                if (a.getAccommodationID().equalsIgnoreCase(accomodationID)) { 
+	                if (a.getID().equalsIgnoreCase(accomodationID)) { 
 	                	selectedAccomodation = a; 
 	                	break; 
 	                }
@@ -309,8 +310,8 @@ import travel_package.Trip;
 	            Trip newTrip = new Trip(destination, duration, basePrice, clientToCompare, selectedTransport, selectedAccomodation);
 	            
 	            trips.add(newTrip);
-	            clientToCompare.addAmountSpent(newTrip.calculateTotalCost());
-	            System.out.println("Trip created successfully! \nTrip ID: " + newTrip.getTripID());
+	            clientToCompare.addAmountSpent(newTrip.getTotalCost());
+	            System.out.println("Trip created successfully! \nTrip ID: " + newTrip.getID());
 
 	        } catch (EntityNotFoundException e) {
 	            System.out.println("Error: " + e.getMessage());
@@ -329,14 +330,14 @@ import travel_package.Trip;
 	        try {
 				System.out.print("What trip would you like to edit? (Enter Trip ID)");
 				for (Trip tr : trips) 
-					System.out.print("\nTrip ID: " + tr.getTripID());
+					System.out.print("\nTrip ID: " + tr.getID());
 				
 				System.out.print("\nChoice: ");
 				String tripID = input.nextLine();
 
 				Trip tripToEdit = null;
 				for (Trip tr : trips) {
-				    if (tr.getTripID().equalsIgnoreCase(tripID)) { 
+				    if (tr.getID().equalsIgnoreCase(tripID)) { 
 				    	tripToEdit = tr;
 				    	break; 
 				    }
@@ -396,14 +397,14 @@ import travel_package.Trip;
 	        try {
 				System.out.print("Which trip would you like to cancel? (Enter Trip Id) ");
 				for (Trip tr : trips) 
-					System.out.print("\nTrip ID: " + tr.getTripID());
+					System.out.print("\nTrip ID: " + tr.getID());
 				
 				System.out.print("\nChoice: ");
 				String tripId = input.nextLine();
 
 				Trip tripToCancel = null;
 				for (Trip tr : trips) {
-				    if (tr.getTripID().equalsIgnoreCase(tripId)) { 
+				    if (tr.getID().equalsIgnoreCase(tripId)) { 
 				    	tripToCancel = tr; 
 				    }
 				}
@@ -448,14 +449,14 @@ import travel_package.Trip;
 	        try {
 				System.out.print("Enter Client ID to list their trips ");
 				for (Client c : clients) 
-					System.out.print("\nClient ID: " + c.getClientID());
+					System.out.print("\nClient ID: " + c.getID());
 				
 				System.out.print("\nChoice: ");
 				String clientID = input.nextLine();
 
 				boolean found = false;
 				for (Trip tr : trips) {
-				    if (tr.getClient().getClientID().equalsIgnoreCase(clientID)) {
+				    if (tr.getClient().getID().equalsIgnoreCase(clientID)) {
 				        System.out.println(tr.toString());
 				        found = true;
 				    }
@@ -469,7 +470,7 @@ import travel_package.Trip;
 	    }
 	    
 	    public double calculateTripTotal(Trip trip) { // Method to calculate the total value of the trip
-	    	return trip.calculateTotalCost();
+	    	return trip.getTotalCost();
 	    }
 	    
 	    public Trip getTrip(int tripIndex) { // Method to receive an index and match it with the index of the array in this file
@@ -534,7 +535,7 @@ import travel_package.Trip;
 	            input.nextLine();
 	            transportOptions.add(newTransport);
 	            
-	            System.out.println("Transportation option added successfully! \nTransport ID: " + newTransport.getTransportID());
+	            System.out.println("Transportation option added successfully! \nTransport ID: " + newTransport.getID());
 	        } catch (InvalidTransportDataException e) {
 	            System.out.println("Error: Invalid transportation data. " + e.getMessage());
 	        }
@@ -550,14 +551,14 @@ import travel_package.Trip;
 	        try {
 				System.out.print("Enter Transport ID to remove ");
 				for (Transportation t : transportOptions) 
-					System.out.print("\nTransport ID: " + t.getTransportID());
+					System.out.print("\nTransport ID: " + t.getID());
 				
 				System.out.print("\nChoice: ");
 				String transportID = input.nextLine();
 
 				Transportation transportToRemove = null;
 				for (Transportation t : transportOptions) {
-				    if (t.getTransportID().equalsIgnoreCase(transportID)) { 
+				    if (t.getID().equalsIgnoreCase(transportID)) { 
 				    	transportToRemove = t; 
 				    	break; 
 				    }
@@ -634,7 +635,7 @@ import travel_package.Trip;
 	            }
 	            
 	            accomodationOptions.add(newAccommodation);
-	            System.out.println("Accommodation option added successfully! \nAccommodation ID: " + newAccommodation.getAccommodationID());
+	            System.out.println("Accommodation option added successfully! \nAccommodation ID: " + newAccommodation.getID());
 	        } catch (InvalidAccommodationDataException e) {
 	            System.out.println("Error: Invalid accommodation data. " + e.getMessage());
 	        }
@@ -650,14 +651,14 @@ import travel_package.Trip;
 	        try {
 				System.out.print("Enter Accommodation ID to remove ");
 				for (Accommodation a : accomodationOptions) 
-					System.out.print("\nAccommodation ID: " + a.getAccommodationID());
+					System.out.print("\nAccommodation ID: " + a.getID());
 				
 				System.out.print("\nChoice: ");
 				String accommodationID = input.nextLine();
 
 				Accommodation accommodationToRemove = null;
 				for (Accommodation a : accomodationOptions) {
-				    if (a.getAccommodationID().equalsIgnoreCase(accommodationID)) { 
+				    if (a.getID().equalsIgnoreCase(accommodationID)) { 
 				    	accommodationToRemove = a; 
 				    	break; 
 				    }
@@ -714,12 +715,12 @@ import travel_package.Trip;
 	        Trip mostExpensiveTrip = trips.get(0);
 
 	        for (Trip tr : trips) {
-	            if (tr.calculateTotalCost() > highestCost) {
-	                highestCost = tr.calculateTotalCost();
+	            if (tr.getTotalCost() > highestCost) {
+	                highestCost = tr.getTotalCost();
 	                mostExpensiveTrip = tr;
 	            }
 	        }
-	        System.out.println("Most Expensive trip ID: " + mostExpensiveTrip.getTripID() + ", Cost: $" + highestCost);
+	        System.out.println("Most Expensive trip ID: " + mostExpensiveTrip.getID() + ", Cost: $" + highestCost);
 	    }
 	    
 	    // For Predefined Scenario
@@ -733,12 +734,12 @@ import travel_package.Trip;
 	        Trip mostExpensiveTrip = tripArr[0];
 
 	        for (int i = 0; i < tripArr.length; i++) {
-	            if (tripArr[i].calculateTotalCost() > highestCost) {
-	                highestCost = tripArr[i].calculateTotalCost();
+	            if (tripArr[i].getTotalCost() > highestCost) {
+	                highestCost = tripArr[i].getTotalCost();
 	                mostExpensiveTrip = tripArr[i];
 	            }
 	        }
-	        System.out.println("Most Expensive trip ID: " + mostExpensiveTrip.getTripID() + ", Cost: $" + highestCost);
+	        System.out.println("Most Expensive trip ID: " + mostExpensiveTrip.getID() + ", Cost: $" + highestCost);
 	    }
 
 	    public void displayCostOfTrip() {
@@ -753,13 +754,13 @@ import travel_package.Trip;
 				Trip displayTrip = trips.get(0);
 				System.out.println("\nAvailable trips:");
 				for (Trip tr : trips) 
-					System.out.println(tr.getTripID());
+					System.out.println(tr.getID());
 
 				System.out.print("Which trip's cost would you like to display? ");
 					String chosenTrip = input.nextLine();
 
 				for (Trip tr : trips) {
-				    if (tr.getTripID().equalsIgnoreCase(chosenTrip)) { 
+				    if (tr.getID().equalsIgnoreCase(chosenTrip)) { 
 				    	displayTrip = tr; 
 				    	counter++; 
 				    }
@@ -768,7 +769,7 @@ import travel_package.Trip;
 				if (counter == 0) 
 					throw new EntityNotFoundException("No Trips Found!");
 				else 
-					System.out.println("Total cost of Trip ID: " + displayTrip.getTripID() + " is $" + displayTrip.calculateTotalCost());
+					System.out.println("Total cost of Trip ID: " + displayTrip.getID() + " is $" + displayTrip.getTotalCost());
 			} catch (EntityNotFoundException e) {
 				System.out.println("Error: " + e.getMessage());
 			}
@@ -840,25 +841,29 @@ import travel_package.Trip;
 	    // It has the possibility to produce a IOException on every file which is why we separate them in case everything is fine
 		public static void SaveAllData(String folderPath){
 			try {
-				ClientFileManager.saveClients(clients, clients.size(), folderPath + "clients.csv");
+				GenericFileManager.save(clients, folderPath + "clients.csv");
+				if(clients.size() == 0) { System.out.println("There are no clients to save!"); }
 			} catch (IOException e) {
 				System.out.println("Client File does not exist!");
 			}
 			
 			try {
-				TransportationFileManager.saveTransportation(transportOptions, transportOptions.size(), folderPath + "transports.csv");
+				GenericFileManager.save(transportOptions, folderPath + "transports.csv");
+				if(transportOptions.size() == 0) { System.out.println("There are no transportations to save!"); }
 			} catch (IOException e) {
 				System.out.println("Transportation File does not exist!");
 			}
 			
 			try {
-				AccommodationFileManager.saveAccommodation(accomodationOptions, accomodationOptions.size(), folderPath + "accommodations.csv");
+				GenericFileManager.save(accomodationOptions, folderPath + "accommodations.csv");
+				if(accomodationOptions.size() == 0) { System.out.println("There are no accommodations to save!"); }
 			} catch (IOException e) {
 				System.out.println("Accommodation File does not exist!");
 			}
 			
 			try {
-				TripFileManager.saveTrips(trips, trips.size(), folderPath + "trips.csv");
+				GenericFileManager.save(trips, folderPath + "trips.csv");
+				if(trips.size() == 0) { System.out.println("There are no trips to save!"); }
 			} catch (IOException e) {
 				System.out.println("Trip File does not exist!");
 			}
@@ -869,7 +874,7 @@ import travel_package.Trip;
 		// It can not only throw an IOException which is why we must catch it in case the file does not exist, but also incorrect data. If the files have wrong inputs then they should not be loaded into the system
 		public static void LoadAllData(String folderPath) throws InvalidClientDataException, InvalidTransportDataException, InvalidAccommodationDataException, InvalidTripDataException {
 			try {
-				ClientFileManager.loadClients(clients, clients.size(), folderPath + "clients.csv");
+				clients = GenericFileManager.load(folderPath + "clients.csv", Client.class);
 				System.out.println("Loaded clients into the system!");
 			} catch (IOException e) {
 				System.out.println("Cannot find the file location for clients"); // Error-Logger
@@ -936,10 +941,10 @@ import travel_package.Trip;
 	            Trip trip4 = new Trip("Canada", 7, 800, client3, transport6, accommodation3);
 
 	            // Update client spending
-	            client1.addAmountSpent(trip1.calculateTotalCost());
-	            client2.addAmountSpent(trip2.calculateTotalCost());
-	            client3.addAmountSpent(trip3.calculateTotalCost());
-	            client3.addAmountSpent(trip4.calculateTotalCost());
+	            client1.addAmountSpent(trip1.getTotalCost());
+	            client2.addAmountSpent(trip2.getTotalCost());
+	            client3.addAmountSpent(trip3.getTotalCost());
+	            client3.addAmountSpent(trip4.getTotalCost());
 
 	            // Display all
 	            System.out.println("\n" + client1); System.out.println(client2); System.out.println(client3);
@@ -1064,8 +1069,8 @@ import travel_package.Trip;
 
 	            double totalCost = 0;
 	            for (int i = 0; i < tripArr.length; i++) {
-	                totalCost += tripArr[i].calculateTotalCost();
-	                System.out.println("Cost of trip #" + (i + 1) + ": $" + String.format("%.2f", tripArr[i].calculateTotalCost()));
+	                totalCost += tripArr[i].getTotalCost();
+	                System.out.println("Cost of trip #" + (i + 1) + ": $" + String.format("%.2f", tripArr[i].getTotalCost()));
 	            }
 	            System.out.println("Total Cost of every trip: $" + String.format("%.2f", totalCost));
 	            System.out.println("--------------------------------");
