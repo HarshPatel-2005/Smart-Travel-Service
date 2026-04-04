@@ -881,7 +881,7 @@ import travel_package.Trip;
 			}
 			
 			try {
-				AccommodationFileManager.loadAccommodation(accomodationOptions, accomodationOptions.size(), folderPath + "accommodations.csv");
+				accomodationOptions = GenericFileManager.load(folderPath + "accommodations.csv", Accommodation.class);
 				System.out.println("Loaded accommodations into the system!");
 			} catch (IOException e) {
 				System.out.println("Cannot find the file location for accommodations"); // Error-Logger

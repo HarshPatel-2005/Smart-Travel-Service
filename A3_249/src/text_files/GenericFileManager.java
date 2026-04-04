@@ -11,6 +11,7 @@ import java.util.List;
 
 import client_package.Client;
 import exceptions.DuplicateEmailException;
+import exceptions.InvalidAccommodationDataException;
 import exceptions.InvalidClientDataException;
 import interfaces.CsvPersistable;
 import travel_package.Accommodation;
@@ -40,31 +41,28 @@ public class GenericFileManager <T extends CsvPersistable>{
 		
 		List<T> list = new ArrayList<>();
 		
-		BufferedReader reader = new BufferedReader(new FileReader(filePath));
-		
+		BufferedReader reader = new BufferedReader(new FileReader(filePath));		
 		String line = "";
 		
-		T object = null;
-		
 		while((line = reader.readLine()) != null) {
+			
+			String[] content = line.split(";");
 			
 			if(clazz == Client.class) {
 				try {					
 					Client client = Client.fromCsvRow(line);
 					
-					String[] content = line.split(";");
-					
 					boolean emailRepeat = false;
 		            for (T c : list) {
 		            	Client clientToCheck = (Client) c;
-		                if (clientToCheck != null && clientToCheck.getEmail().equalsIgnoreCase(content[3])) {
+		                if (clientToCheck != null && clientToCheck.getEmail().equalsIgnoreCase(client.getEmail())) {
 		                    emailRepeat = true;
 		                    break;
 		                }
 		            }
 
 		            if (emailRepeat) { // If the email has been seen already duplicateEmailException is called
-		                throw new DuplicateEmailException("DuplicateEmailException: Duplicate email: " + content[3]);
+		                throw new DuplicateEmailException("DuplicateEmailException: Duplicate email: " + client.getEmail());
 		            }
 					
 		            list.add((T) client);
@@ -75,11 +73,26 @@ public class GenericFileManager <T extends CsvPersistable>{
 		        	ErrorLogger.logError("Client", line, e.getMessage());
 		        }
 			}
-//			else if(clazz == Accommodation.class) {
-//				try {
-//					
-//				}
-//			}
+			else if(clazz == Accommodation.class) {
+				Accommodation accommodation = null;
+				
+				try {
+					if(content[0].equals("HOTEL")) {
+						accommodation = Hotel.fromCsvRow(line);
+					}
+					else if(content[0].equals("HOSTEL")){
+						accommodation = Hostel.fromCsvRow(line);
+					}
+					else { // If the type is none of the two, produce an exception
+						throw new InvalidAccommodationDataException("InvalidAccommodationDataException: Unknown Accommodation Type: " + content[0]);
+					}
+					
+					list.add((T) accommodation);
+					
+				} catch (InvalidAccommodationDataException e) {
+					ErrorLogger.logError("Accommodation", line, e.getMessage());
+				}
+			}
 		}
 		
 		return list;
