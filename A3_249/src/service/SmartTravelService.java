@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Predicate;
 
 import client_package.Client;
 import exceptions.DuplicateEmailException;
@@ -22,6 +23,7 @@ import exceptions.InvalidAccommodationDataException;
 import exceptions.InvalidClientDataException;
 import exceptions.InvalidTransportDataException;
 import exceptions.InvalidTripDataException;
+import repository.Repository;
 import text_files.AccommodationFileManager;
 import text_files.ClientFileManager;
 import text_files.GenericFileManager;
@@ -42,16 +44,28 @@ import travel_package.Trip;
 		
 		private static Scanner input;
 		
-		private static List<Client> clients;	
+		private static List<Client> clients;
+		private static Repository<Client> clientRepo;
+		
 		private static List<Trip> trips;	
-		private static List<Transportation> transportOptions;		
+		private static Repository<Trip> tripsRepo;
+		
+		private static List<Transportation> transportOptions;
+		private static Repository<Transportation> transportRepo;
+		
 		private static List<Accommodation> accomodationOptions;
+		private static Repository<Accommodation> accomodationRepo;
 		
 		public SmartTravelService(Scanner input) {
 			clients = new ArrayList<>();
 			accomodationOptions = new ArrayList<>();
 	        transportOptions = new ArrayList<>();
 	        trips = new ArrayList<>();
+	        
+	        clientRepo = new Repository<>();
+	        tripsRepo = new Repository<>();
+	        transportRepo = new Repository<>();
+	        accomodationRepo = new Repository<>();
 	        
 	        SmartTravelService.input = input;
 		}
@@ -81,6 +95,8 @@ import travel_package.Trip;
 	            
 	            Client newClient = new Client(firstName, lastName, email);
 	            clients.add(newClient);
+	            clientRepo.add(newClient);
+	            
 	            System.out.println("Client added successfully! \nClient ID: " + newClient.getID());
 	            
 	        } catch (InvalidClientDataException e) {
@@ -194,6 +210,8 @@ import travel_package.Trip;
 				}
 				
 				clients.remove(clientToDelete);
+				clientRepo.remove(clientToDelete);
+				
 				System.out.println("Client deleted successfully!");
 			} catch (EntityNotFoundException e) {
 				System.out.println("Error: " + e.getMessage());
@@ -310,6 +328,8 @@ import travel_package.Trip;
 	            Trip newTrip = new Trip(destination, duration, basePrice, clientToCompare, selectedTransport, selectedAccomodation);
 	            
 	            trips.add(newTrip);
+	            tripsRepo.add(newTrip);
+	            
 	            clientToCompare.addAmountSpent(newTrip.getTotalCost());
 	            System.out.println("Trip created successfully! \nTrip ID: " + newTrip.getID());
 
@@ -413,6 +433,8 @@ import travel_package.Trip;
 				}
 				
 				trips.remove(tripToCancel);
+				tripsRepo.remove(tripToCancel);
+				
 				System.out.println("Trip cancelled successfully!");
 			} catch (EntityNotFoundException e) {
 				System.out.println("Error: " + e.getMessage());
@@ -534,6 +556,7 @@ import travel_package.Trip;
 	            
 	            input.nextLine();
 	            transportOptions.add(newTransport);
+	            transportRepo.add(newTransport);
 	            
 	            System.out.println("Transportation option added successfully! \nTransport ID: " + newTransport.getID());
 	        } catch (InvalidTransportDataException e) {
@@ -569,6 +592,8 @@ import travel_package.Trip;
 				}
 				
 				transportOptions.remove(transportToRemove);
+				transportRepo.remove(transportToRemove);
+				
 				System.out.println("Transportation option removed successfully!");				
 			} catch (EntityNotFoundException e) {
 				System.out.println("Error: " + e.getMessage());
@@ -635,6 +660,8 @@ import travel_package.Trip;
 	            }
 	            
 	            accomodationOptions.add(newAccommodation);
+	            accomodationRepo.add(newAccommodation);
+	            
 	            System.out.println("Accommodation option added successfully! \nAccommodation ID: " + newAccommodation.getID());
 	        } catch (InvalidAccommodationDataException e) {
 	            System.out.println("Error: Invalid accommodation data. " + e.getMessage());
@@ -670,6 +697,8 @@ import travel_package.Trip;
 				}
 				
 				accomodationOptions.remove(accommodationToRemove);
+				accomodationRepo.remove(accommodationToRemove);
+				
 				System.out.println("Accommodation option removed successfully!");
 			} catch (EntityNotFoundException e) {
 				System.out.println("Error: " + e.getMessage());
@@ -873,31 +902,83 @@ import travel_package.Trip;
 		// This method loads the file based on the folderPath
 		// It can not only throw an IOException which is why we must catch it in case the file does not exist, but also incorrect data. If the files have wrong inputs then they should not be loaded into the system
 		public static void LoadAllData(String folderPath) throws InvalidClientDataException, InvalidTransportDataException, InvalidAccommodationDataException, InvalidTripDataException {
-			try {
-				clients = GenericFileManager.load(folderPath + "clients.csv", Client.class);
-				System.out.println("Loaded clients into the system!");
-			} catch (IOException e) {
-				System.out.println("Cannot find the file location for clients"); // Error-Logger
-			}
 			
-			try {
-				accomodationOptions = GenericFileManager.load(folderPath + "accommodations.csv", Accommodation.class);
-				System.out.println("Loaded accommodations into the system!");
-			} catch (IOException e) {
-				System.out.println("Cannot find the file location for accommodations"); // Error-Logger
-			}
+			boolean useGenericPersistence = true;
 			
-			try {
-				TransportationFileManager.loadTransportation(transportOptions, transportOptions.size(), folderPath + "transports.csv");
-				System.out.println("Loaded Transportations into the system!");
-			} catch (IOException e) {
-				System.out.println("Cannot find the file location for transportations"); // Error-Logger
+			if(useGenericPersistence) {
+				try {
+					clients = GenericFileManager.load(folderPath + "clients.csv", Client.class);
+					
+					for(Client c: clients) {
+						clientRepo.add(c);
+					}
+					
+					System.out.println("Loaded clients into the system!");
+				} catch (IOException e) {
+					System.out.println("Cannot find the file location for clients"); // Error-Logger
+				}
+				
+				try {
+					accomodationOptions = GenericFileManager.load(folderPath + "accommodations.csv", Accommodation.class);
+					
+					for(Accommodation a : accomodationOptions) {
+						accomodationRepo.add(a);
+					}
+
+					System.out.println("Loaded accommodations into the system!");
+				} catch (IOException e) {
+					System.out.println("Cannot find the file location for accommodations"); // Error-Logger
+				}
+				
+				try {
+					transportOptions = GenericFileManager.load(folderPath + "transports.csv", Transportation.class);
+					
+					for(Transportation tr : transportOptions) {
+						transportRepo.add(tr);
+					}
+					
+					System.out.println("Loaded Transportations into the system!");
+				} catch (IOException e) {
+					System.out.println("Cannot find the file location for transportations"); // Error-Logger
+				}
+				try {
+					trips = GenericFileManager.load(folderPath + "trips.csv", Trip.class, clients, accomodationOptions, transportOptions);
+					
+					for(Trip t : trips) {
+						tripsRepo.add(t);
+					}
+					System.out.println("Loaded Trips into the system!");
+				} catch (IOException e) {
+					System.out.println("Cannot find the file location for trips"); // Error-Logger
+				}
 			}
-			try {
-				TripFileManager.loadTrips(clients, clients.size(), accomodationOptions, accomodationOptions.size(), transportOptions, transportOptions.size(), trips, trips.size(), folderPath + "trips.csv");
-				System.out.println("Loaded Trips into the system!");
-			} catch (IOException e) {
-				System.out.println("Cannot find the file location for trips"); // Error-Logger
+			else { // Backup
+				try {
+					ClientFileManager.loadClients(clients, clients.size(), folderPath + "clients.csv");
+					System.out.println("Loaded clients into the system!");
+				} catch (IOException e) {
+					System.out.println("Cannot find the file location for clients"); // Error-Logger
+				}
+				
+				try {
+					AccommodationFileManager.loadAccommodation(accomodationOptions, accomodationOptions.size(), folderPath + "accommodations.csv");
+					System.out.println("Loaded accommodations into the system!");
+				} catch (IOException e) {
+					System.out.println("Cannot find the file location for accommodations"); // Error-Logger
+				}
+				
+				try {
+					TransportationFileManager.loadTransportation(transportOptions, transportOptions.size(), folderPath + "transports.csv");
+					System.out.println("Loaded Transportations into the system!");
+				} catch (IOException e) {
+					System.out.println("Cannot find the file location for transportations"); // Error-Logger
+				}
+				try {
+					TripFileManager.loadTrips(clients, clients.size(), accomodationOptions, accomodationOptions.size(), transportOptions, transportOptions.size(), trips, trips.size(), folderPath + "trips.csv");
+					System.out.println("Loaded Trips into the system!");
+				} catch (IOException e) {
+					System.out.println("Cannot find the file location for trips"); // Error-Logger
+				}
 			}
 			
 		}
@@ -905,6 +986,32 @@ import travel_package.Trip;
 		// Lists all the trips with the client and such
 		public static void listAllData() {
 			listAllTrips();
+		}
+		
+		// -------------------------
+	    // Advanced Analytics
+	    // -------------------------
+		
+		public void tripsByDestination() {
+			
+			List<Trip> tripFiltered = null;
+			
+			if(trips.size() == 0) {
+				System.out.println("There are no trips to filter through!");
+				return;
+			}
+			
+			System.out.print("What destination would you like to filter your trips for: ");
+				String userInputDestination = input.next();
+				
+			Predicate<Trip> destinationString = t -> t.getDestination().equalsIgnoreCase(userInputDestination);
+			tripFiltered = tripsRepo.filter(destinationString);
+			
+			for(Trip t : tripFiltered) {
+				System.out.print("\nFiltered Trip for destination: " + userInputDestination);
+				System.out.println("\n-----------------" + t.toString() + "\n-----------------");
+			}
+				
 		}
 
 	    // -------------------------

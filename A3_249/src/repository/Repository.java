@@ -16,6 +16,10 @@ public class Repository<T extends Identifiable & Comparable<? super T>>{
 		list.add(item);
 	}
 	
+	public void remove(T item) {
+		list.remove(item);
+	}
+	
 	public T findByID(String id) throws EntityNotFoundException{
 		for(T lookup : list) {
 			if(lookup.getID().equals(id)) {
@@ -26,6 +30,16 @@ public class Repository<T extends Identifiable & Comparable<? super T>>{
 	}
 	
 	public List<T> filter(Predicate<T> predicate){
+		
+		List<T> filteredList = new ArrayList<>();
+		
+		for(T item : list) {
+			if(predicate.test(item)) {
+				filteredList.add(item);
+			}
+		}
+		
+		return filteredList;
 		
 	}
 	

@@ -205,7 +205,7 @@ public class SmartTravelDriver {
             	input.nextLine();
             	
             	switch(choice) {
-            		case 1:
+            		case 1: service.tripsByDestination(); break;
             		case 2:
             		case 3:
             		case 4:
