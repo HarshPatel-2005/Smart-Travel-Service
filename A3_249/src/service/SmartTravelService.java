@@ -1161,97 +1161,123 @@ import travel_package.Trip;
 		
 		public void SmartSortCollections() {
 			
-			// Sorting Clients: 
-			
-			if(recentClients.isEmpty()) {
-				System.out.println("There has not been any clients that you have viewed!");
-				return;
+			System.out.println("Which Class would you like to see from the following options: "
+					+ "\n1. Client \n2. Trip \n3. Accommodation \n4. Transportation");
+			System.out.print("Choice: ");
+				int userChoice = input.nextInt();
+				
+			while(userChoice > 4 || userChoice < 1) {
+				System.out.print("Invalid Input. Try again: ");
+					userChoice = input.nextInt();
 			}
 			
-			List<Client> sortedClients = new ArrayList<>(recentClients.getList());
-			
-			Collections.sort(sortedClients);
-			
-			System.out.println("\nFrom the recently viewed clients, these are top clients by spending: ");
-			
-			System.out.println("---------------------------------------------");
-			
-			int counterClient = 1;
-			for(Client c : sortedClients) {
-				System.out.println(counterClient + ". " + c.getID() + ": $" + c.getTotalSpent());
-				counterClient++;
+			switch(userChoice) {
+				case 1: {
+					// Sorting Clients: 
+					
+					if(recentClients.isEmpty()) {
+						System.out.println("There has not been any clients that you have viewed!");
+						return;
+					}
+					
+					List<Client> sortedClients = new ArrayList<>(recentClients.getList());
+					
+					Collections.sort(sortedClients);
+					
+					System.out.println("\nFrom the recently viewed clients, these are top clients by spending: ");
+					
+					System.out.println("---------------------------------------------");
+					
+					int counterClient = 1;
+					for(Client c : sortedClients) {
+						System.out.println(counterClient + ". " + c.getID() + ": $" + c.getTotalSpent());
+						counterClient++;
+					}
+					
+					System.out.println("---------------------------------------------");
+					
+					break;
+				}
+				case 2: {
+					// Sorting Trips:
+					
+					if(recentTrips.isEmpty()) {
+						System.out.println("There has not been any trips that you have viewed!");
+						return;
+					}
+					
+					List<Trip> sortedTrips = new ArrayList<>(recentTrips.getList());
+					
+					Collections.sort(sortedTrips);
+					
+					System.out.println("\nFrom the recently viewed trips, these are top trips by their cost: ");
+					
+					System.out.println("---------------------------------------------");
+					
+					int counterTrip = 1;
+					for(Trip t : sortedTrips) {
+						System.out.println(counterTrip + ". " + t.getID() + ": $" + t.getTotalCost());
+						counterTrip++;
+					}
+					
+					System.out.println("---------------------------------------------");
+					
+					break;
+				}
+				case 3: {
+					// Sorting Accommodations:
+					
+					if(recentAccommodations.isEmpty()) {
+						System.out.println("There has not been any accommodations that you have viewed!");
+						return;
+					}
+					
+					List<Accommodation> sortedAccommodation = new ArrayList<>(recentAccommodations.getList());
+					
+					Collections.sort(sortedAccommodation);
+					
+					System.out.println("\nFrom the recently viewed accommodations, these are top trips by their cost: ");
+					
+					System.out.println("---------------------------------------------");
+					
+					int counterAccommodations = 1;
+					for(Accommodation a : sortedAccommodation) {
+						System.out.println(counterAccommodations + ". " + a.getID() + ": $" + a.getPricePerNight());
+						counterAccommodations++;
+					}
+					
+					System.out.println("---------------------------------------------");
+					
+					break;
+				}
+				case 4: {
+					// Sorting Transportations:
+					
+					if(recentTransportations.isEmpty()) {
+						System.out.println("There has not been any transportation that you have viewed!");
+						return;
+					}
+					
+					List<Transportation> sortedTransportation = new ArrayList<>(recentTransportations.getList());
+					
+					Collections.sort(sortedTransportation);
+					
+					System.out.println("\nFrom the recently viewed transportations, these are top trips by their cost: ");
+					
+					System.out.println("---------------------------------------------");
+					
+					int counterTransportation = 1;
+					for(Transportation tr : sortedTransportation) {
+						System.out.println(counterTransportation + ". " + tr.getID() + ": $" + tr.calculateCost(0));
+						counterTransportation++;
+					}
+					
+					System.out.println("---------------------------------------------");
+					
+					break;
+				}
+					
 			}
-			
-			System.out.print("---------------------------------------------");
-			
-			// Sorting Trips:
-			
-			if(recentTrips.isEmpty()) {
-				System.out.println("There has not been any trips that you have viewed!");
-				return;
-			}
-			
-			List<Trip> sortedTrips = new ArrayList<>(recentTrips.getList());
-			
-			Collections.sort(sortedTrips);
-			
-			System.out.println("\nFrom the recently viewed trips, these are top trips by their cost: ");
-			
-			System.out.println("---------------------------------------------");
-			
-			int counterTrip = 1;
-			for(Trip t : sortedTrips) {
-				System.out.println(counterTrip + ". " + t.getID() + ": $" + t.getTotalCost());
-				counterTrip++;
-			}
-			
-			System.out.print("---------------------------------------------");
-			
-			// Sorting Accommodations:
-			
-			if(recentAccommodations.isEmpty()) {
-				System.out.println("There has not been any accommodations that you have viewed!");
-				return;
-			}
-			
-			List<Accommodation> sortedAccommodation = new ArrayList<>(recentAccommodations.getList());
-			
-			Collections.sort(sortedAccommodation);
-			
-			System.out.println("\nFrom the recently viewed accommodations, these are top trips by their cost: ");
-			
-			System.out.println("---------------------------------------------");
-			
-			int counterAccommodations = 1;
-			for(Accommodation a : sortedAccommodation) {
-				System.out.println(counterAccommodations + ". " + a.getID() + ": $" + a.getPricePerNight());
-				counterAccommodations++;
-			}
-			
-			System.out.print("---------------------------------------------");
-			
-			// Sorting Transportations:
-			
-			if(recentTransportations.isEmpty()) {
-				System.out.println("There has not been any transportation that you have viewed!");
-				return;
-			}
-			
-			List<Transportation> sortedTransportation = new ArrayList<>(recentTransportations.getList());
-			
-			Collections.sort(sortedTransportation);
-			
-			System.out.println("\nFrom the recently viewed transportations, these are top trips by their cost: ");
-			
-			System.out.println("---------------------------------------------");
-			
-			int counterTransportation = 1;
-			for(Transportation tr : sortedTransportation) {
-				System.out.println(counterTransportation + ". " + tr.getID() + ": $" + tr.calculateCost(0));
-				counterTransportation++;
-			}
-			
-			System.out.print("---------------------------------------------");
 			
 		}
 
