@@ -12,6 +12,7 @@ package service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
@@ -42,19 +43,26 @@ import travel_package.Trip;
 		
 		// Initializing the arrays and the counts for the different instances
 		
+		// Each time an instance gets created it gets added to it's ArrayList and also it's Repository, where the repository is the list that gets searched through when looking for specific variations
+		// The RecentList variables are list where when they get viewed they get added to the list in order to show the user what they have recently viewed
+		
 		private static Scanner input;
 		
 		private static List<Client> clients;
 		private static Repository<Client> clientRepo;
+		private static RecentList<Client> recentClients;
 		
 		private static List<Trip> trips;	
 		private static Repository<Trip> tripsRepo;
+		private static RecentList<Trip> recentTrips;
 		
 		private static List<Transportation> transportOptions;
 		private static Repository<Transportation> transportRepo;
+		private static RecentList<Transportation> recentTransportations;
 		
 		private static List<Accommodation> accomodationOptions;
 		private static Repository<Accommodation> accomodationRepo;
+		private static RecentList<Accommodation> recentAccommodations;
 		
 		public SmartTravelService(Scanner input) {
 			clients = new ArrayList<>();
@@ -66,6 +74,11 @@ import travel_package.Trip;
 	        tripsRepo = new Repository<>();
 	        transportRepo = new Repository<>();
 	        accomodationRepo = new Repository<>();
+	        
+	        recentClients = new RecentList<>();
+	        recentTrips = new RecentList<>();
+	        recentTransportations = new RecentList<>();
+	        recentAccommodations = new RecentList<>();
 	        
 	        SmartTravelService.input = input;
 		}
@@ -447,12 +460,17 @@ import travel_package.Trip;
 	        }
 	        else {
 	        	for (Trip tr : trips) {
-	        	System.out.println("-------------------");
-				System.out.println(tr.toString());
-				System.out.println("\n" + tr.getClient().toString());
-				System.out.println(tr.getTransportation().toString());
-				System.out.println(tr.getAccommodation().toString());
-				System.out.println("-------------------");
+	        		System.out.println("-------------------");
+	        		System.out.println(tr.toString());
+	        		System.out.println("\n" + tr.getClient().toString());
+	        		System.out.println(tr.getTransportation().toString());
+	        		System.out.println(tr.getAccommodation().toString());
+	        		System.out.println("-------------------");
+
+	        		recentClients.addRecent(tr.getClient());
+	        		recentTrips.addRecent(tr);
+	        		recentTransportations.addRecent(tr.getTransportation());
+	        		recentAccommodations.addRecent(tr.getAccommodation());
 	        	}
 	        }
 	    }
@@ -480,6 +498,7 @@ import travel_package.Trip;
 				for (Trip tr : trips) {
 				    if (tr.getClient().getID().equalsIgnoreCase(clientID)) {
 				        System.out.println(tr.toString());
+				        recentTrips.addRecent(tr);
 				        found = true;
 				    }
 				}
@@ -615,6 +634,7 @@ import travel_package.Trip;
 				    if (t.getClass().getSimpleName().equalsIgnoreCase(userTransportationInput)) {
 				        System.out.println("\n" + t.toString());
 				        counter++;
+				        recentTransportations.addRecent(t);
 				    }
 				}
 				
@@ -720,6 +740,7 @@ import travel_package.Trip;
 				    if (a.getClass().getSimpleName().equalsIgnoreCase(userAccommodationInput)) {
 				        System.out.println(a.toString());
 				        counter++;
+				        recentAccommodations.addRecent(a);
 				    }
 				}
 				if (counter == 0) 
@@ -750,6 +771,7 @@ import travel_package.Trip;
 	            }
 	        }
 	        System.out.println("Most Expensive trip ID: " + mostExpensiveTrip.getID() + ", Cost: $" + highestCost);
+	        recentTrips.addRecent(mostExpensiveTrip);
 	    }
 	    
 	    // For Predefined Scenario
@@ -792,6 +814,7 @@ import travel_package.Trip;
 				    if (tr.getID().equalsIgnoreCase(chosenTrip)) { 
 				    	displayTrip = tr; 
 				    	counter++; 
+				    	recentTrips.addRecent(displayTrip);
 				    }
 				}
 
@@ -944,6 +967,21 @@ import travel_package.Trip;
 				try {
 					trips = GenericFileManager.load(folderPath + "trips.csv", Trip.class, clients, accomodationOptions, transportOptions);
 					
+					// Loads in the total spent by each client when loaded in the system
+					for (int i = 0; i < clients.size(); i++) {
+			        	
+			            Client client = clients.get(i);
+			            double spent = 0;
+			            
+			            for(Trip tr : trips) {
+			            	if(tr.getClient().getID().equalsIgnoreCase(client.getID())) {
+			            		spent += tr.getTotalCost();
+			            	}
+			            }
+			            
+			            client.addAmountSpent(spent);
+					}
+					
 					for(Trip t : trips) {
 						tripsRepo.add(t);
 					}
@@ -975,6 +1013,22 @@ import travel_package.Trip;
 				}
 				try {
 					TripFileManager.loadTrips(clients, clients.size(), accomodationOptions, accomodationOptions.size(), transportOptions, transportOptions.size(), trips, trips.size(), folderPath + "trips.csv");
+					
+					// Loads in the total spent by each client when loaded in the system
+					for (int i = 0; i < clients.size(); i++) {
+			        	
+			            Client client = clients.get(i);
+			            double spent = 0;
+			            
+			            for(Trip tr : trips) {
+			            	if(tr.getClient().getID().equalsIgnoreCase(client.getID())) {
+			            		spent += tr.getTotalCost();
+			            	}
+			            }
+			            
+			            client.addAmountSpent(spent);
+					}
+					
 					System.out.println("Loaded Trips into the system!");
 				} catch (IOException e) {
 					System.out.println("Cannot find the file location for trips"); // Error-Logger
@@ -1010,8 +1064,195 @@ import travel_package.Trip;
 			for(Trip t : tripFiltered) {
 				System.out.print("\nFiltered Trip for destination: " + userInputDestination);
 				System.out.println("\n-----------------" + t.toString() + "\n-----------------");
+				recentTrips.addRecent(t);
 			}
 				
+		}
+		
+		public void tripsByCostRange() {
+			
+			List<Trip> tripFiltered = null;
+			
+			double tripCostMin;
+			double tripCostMax;
+			
+			double tempMin;
+			double tempMax;
+			
+			if(trips.size() == 0) {
+				System.out.println("There are no trips to filter through!");
+				return;
+			}
+			
+			System.out.print("\nWhat minimum trip price would you like to filter your trips for: ");
+				tempMin = input.nextDouble();
+				
+			while(tempMin < 0) {
+				System.out.print("\nMinimum price cannot be less than 0. Try again: ");
+					tempMin = input.nextDouble();
+			}
+				
+			System.out.print("\nWhat maximum trip price would you like to filter your trips for: ");
+				tempMax = input.nextDouble();
+				
+			while(tempMax < tempMin) {
+				System.out.print("\nMaximum price cannot be less than the minimum price. Try again: ");
+					tempMax = input.nextDouble();
+			}
+				
+			tripCostMin = tempMin;
+			tripCostMax = tempMax;
+				
+			Predicate<Trip> minCostTrip = t -> t.getTotalCost() > tripCostMin && t.getTotalCost() < tripCostMax;
+			tripFiltered = tripsRepo.filter(minCostTrip);
+			
+			if(tripFiltered.size() == 0) {
+				System.out.println("\nThere are no trips within the range of $" + tripCostMin + " and $" + tripCostMax);
+				return;
+			}
+			
+			System.out.print("\nFiltered Trip for within the range of $" + tripCostMin + " and $" + tripCostMax + ":");
+			
+			for(Trip t : tripFiltered) {
+				System.out.println("\n--------------------------");
+				System.out.println(t.toString());
+				System.out.println("\n" + t.getClient().toString());
+				System.out.println(t.getTransportation().toString());
+				System.out.println(t.getAccommodation().toString());
+				System.out.println("\n--------------------------");
+				recentTrips.addRecent(t);
+			}
+			
+		}
+		
+		public void topClientsBySpending() {
+			
+			if(recentClients.isEmpty()) {
+				System.out.println("There has not been any clients that you have viewed!");
+				return;
+			}
+			
+			List<Client> sortedClients = new ArrayList<>(recentClients.getList());
+			
+			Collections.sort(sortedClients);
+			
+			System.out.println("From the recently viewed clients, these are top clients by spending: ");
+			
+			int counter = 1;
+			for(Client c : sortedClients) {
+				System.out.println(counter + ". " + c.getID() + ": $" + c.getTotalSpent());
+				counter++;
+			}
+			
+		}
+		
+		public void viewRecentTrips() {
+			
+			if(recentTrips.isEmpty()) {
+				System.out.println("There has not been any trips that you have viewed!");
+				return;
+			}
+			
+			System.out.println("\nRecently viewed trips: ");
+			
+			System.out.print("-------------------");
+			recentTrips.printRecent();
+		}
+		
+		public void SmartSortCollections() {
+			
+			// Sorting Clients: 
+			
+			if(recentClients.isEmpty()) {
+				System.out.println("There has not been any clients that you have viewed!");
+				return;
+			}
+			
+			List<Client> sortedClients = new ArrayList<>(recentClients.getList());
+			
+			Collections.sort(sortedClients);
+			
+			System.out.println("\nFrom the recently viewed clients, these are top clients by spending: ");
+			
+			System.out.println("---------------------------------------------");
+			
+			int counterClient = 1;
+			for(Client c : sortedClients) {
+				System.out.println(counterClient + ". " + c.getID() + ": $" + c.getTotalSpent());
+				counterClient++;
+			}
+			
+			System.out.print("---------------------------------------------");
+			
+			// Sorting Trips:
+			
+			if(recentTrips.isEmpty()) {
+				System.out.println("There has not been any trips that you have viewed!");
+				return;
+			}
+			
+			List<Trip> sortedTrips = new ArrayList<>(recentTrips.getList());
+			
+			Collections.sort(sortedTrips);
+			
+			System.out.println("\nFrom the recently viewed trips, these are top trips by their cost: ");
+			
+			System.out.println("---------------------------------------------");
+			
+			int counterTrip = 1;
+			for(Trip t : sortedTrips) {
+				System.out.println(counterTrip + ". " + t.getID() + ": $" + t.getTotalCost());
+				counterTrip++;
+			}
+			
+			System.out.print("---------------------------------------------");
+			
+			// Sorting Accommodations:
+			
+			if(recentAccommodations.isEmpty()) {
+				System.out.println("There has not been any accommodations that you have viewed!");
+				return;
+			}
+			
+			List<Accommodation> sortedAccommodation = new ArrayList<>(recentAccommodations.getList());
+			
+			Collections.sort(sortedAccommodation);
+			
+			System.out.println("\nFrom the recently viewed accommodations, these are top trips by their cost: ");
+			
+			System.out.println("---------------------------------------------");
+			
+			int counterAccommodations = 1;
+			for(Accommodation a : sortedAccommodation) {
+				System.out.println(counterAccommodations + ". " + a.getID() + ": $" + a.getPricePerNight());
+				counterAccommodations++;
+			}
+			
+			System.out.print("---------------------------------------------");
+			
+			// Sorting Transportations:
+			
+			if(recentTransportations.isEmpty()) {
+				System.out.println("There has not been any transportation that you have viewed!");
+				return;
+			}
+			
+			List<Transportation> sortedTransportation = new ArrayList<>(recentTransportations.getList());
+			
+			Collections.sort(sortedTransportation);
+			
+			System.out.println("\nFrom the recently viewed transportations, these are top trips by their cost: ");
+			
+			System.out.println("---------------------------------------------");
+			
+			int counterTransportation = 1;
+			for(Transportation tr : sortedTransportation) {
+				System.out.println(counterTransportation + ". " + tr.getID() + ": $" + tr.calculateCost(0));
+				counterTransportation++;
+			}
+			
+			System.out.print("---------------------------------------------");
+			
 		}
 
 	    // -------------------------

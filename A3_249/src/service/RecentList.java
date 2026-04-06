@@ -1,7 +1,8 @@
 package service;
 
 import java.util.Iterator;
-import java.util.LinkedList;;
+import java.util.LinkedList;
+import java.util.List;;
 
 public class RecentList <T>{
 	
@@ -11,21 +12,21 @@ public class RecentList <T>{
 	public void addRecent(T item) {
 		
 		if(list.size() == MAX_SIZE) {
-			list.removeLast();
-			list.addFirst(item);
+			list.removeLast(); // If the list is full remove the last one
 		}
-		else
-			list.addFirst(item);
+		
+		list.remove(item); // Removes any previous item viewed
+		list.addFirst(item); // Adds the removed item back at the start
 		
 	}
 	
-	public void printRecent(int maxToShow) {
+	public void printRecent() {
 		
-		Iterator<T> iterator = list.descendingIterator(); // Creates an iterator interface in order to traverse a collection one by one. This one will specifically get the list in it's reverse order to print from the last
-															// to the first
+		Iterator<T> iterator = list.iterator(); // Creates an iterator interface in order to traverse a collection one by one. This list will print from the most recent item added to the oldest item added
 		
 		while(iterator.hasNext()) { // Check if there's another value after the one it's currently on
-			System.out.print(iterator.next() + " | "); // Print the next value
+			System.out.println(iterator.next()); // Print the next value
+			System.out.print("-------------------");
 		}
 		
 	}
@@ -42,6 +43,10 @@ public class RecentList <T>{
 		else
 			return false;
 		
+	}
+	
+	public LinkedList<T> getList() {
+		return list;
 	}
 	
 }

@@ -73,12 +73,12 @@ public class Client implements Identifiable, CsvPersistable, Comparable<Client>{
 	@Override
 	public int compareTo(Client o) { // Comparable Interface Method
 		
-		if(o.amountSpent > this.amountSpent)
+		if(o.getTotalSpent() > this.getTotalSpent())
 			return 1;
-		else if(o.amountSpent == this.amountSpent)
-			return 0;
-		else
+		else if(o.getTotalSpent() < this.getTotalSpent())
 			return -1;
+		else
+			return 0;
 		
 	}
 

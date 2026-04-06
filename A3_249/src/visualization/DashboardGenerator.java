@@ -145,7 +145,6 @@ public class DashboardGenerator {
             double spent = 0;
   
             List<Trip> trips = service.getAllTrips();
-            int tripCount = service.getTripCount();
             
             for(Trip tr : trips) {
             	if(tr.getClient().getID().equalsIgnoreCase(client.getID())) {

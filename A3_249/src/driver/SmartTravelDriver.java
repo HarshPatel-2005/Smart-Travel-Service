@@ -206,12 +206,11 @@ public class SmartTravelDriver {
             	
             	switch(choice) {
             		case 1: service.tripsByDestination(); break;
-            		case 2:
-            		case 3:
-            		case 4:
-            		case 5:
-            		case 6:
-            		case 7: System.out.println("Returning to Main Menu!"); return;
+            		case 2: service.tripsByCostRange(); break;
+            		case 3: service.topClientsBySpending(); break;
+            		case 4: service.viewRecentTrips(); break;
+            		case 5: service.SmartSortCollections(); break;
+            		case 6: System.out.println("Returning to Main Menu!"); return;
             		default: System.out.println("Invalid Choice!"); break;
             	}
             	
