@@ -1060,8 +1060,7 @@ import travel_package.Trip;
 				
 			Predicate<Trip> destinationString = t -> t.getDestination().equalsIgnoreCase(userInputDestination);
 			tripFiltered = tripsRepo.filter(destinationString);
-			
-			
+
 			boolean found = false;
 			for(Trip t : tripFiltered) {
 				found = true;
