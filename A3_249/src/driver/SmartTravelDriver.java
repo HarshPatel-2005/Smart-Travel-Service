@@ -50,6 +50,8 @@ public class SmartTravelDriver {
 
     // Display Welcome Message
     private static void displayWelcomeMessage() {
+    	System.out.println("Program made by : Harsh Patel ");
+    	
         System.out.println("-------------------------------------------");
         System.out.println("Welcome to Smart Travel Planner System!");
         System.out.println("-------------------------------------------");
