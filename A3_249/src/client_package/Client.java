@@ -3,16 +3,18 @@ import exceptions.*;
 import interfaces.CsvPersistable;
 import interfaces.Identifiable;
 
-//Assignment 3
-//Question: Smart Travel Agency
-//Written by: Harsh Patel (40341498)
+// Assignment 3
+// Question: Smart Travel Agency
+// Written by: Harsh Patel (40341498)
 
-//The purpose of this assignment is to practice file I/O, exception handling and abstract classes. It will also work on arrays and inheritance furthermore.
-//This assignment is meant to add onto the first one by adding persistence, which is to save and load data in order to make programs that retain memory. It will also work on making sure that certain inputs are correctly
-//written and that it won't crash if it is not
+// The purpose of this assignment is to practice using Interfaces, Generics, ArrayList and LinkedList. The interfaces are used so that we can share common features between multiple classes that are not connected. Generics
+// are useful when it doesn't matter which file we put but the files are able to be placed there. These generics usually need a specific type which is why we use the interfaces and abstract classes to specify which classes
+// can be put in the generics. This assignment also enhances usability so that it can be with no limited spaces, using arrayList. This allows us to store multiple instances without a limit. LinkedList will be used as a real
+// feature that is seen, which are the recently viewed objects. When the user views a specific object the recently viewed will save which objects were seen recently
 
-// The client class is where the creation of the client happens. Within this assignment, we are now tasked to verify that the user has input valid inputs and if not, rather than crashing the client we simply create
-// an exception to handle it and let the user know that is not possible and send them back to the start
+// The client class is where the creation of the client happens. Within this assignment, we are now tasked with implementing interfaces to use it elsewhere, where all of these features are shared. Identifiable is utilized to
+// find the IDs, which exist in client, trips, accommodations and transportations even when they're not related. CsvPersistable is used for generics to specify in the file that we want specifically a CsvPersistable implemented
+// class within the generic. These exist in all 4 of the classes. Comparable is utilized to compare itself to other objects of the same type which is used for smart sorting. This is also implemented in multiple classes
 
 public class Client implements Identifiable, CsvPersistable, Comparable<Client>{
     private String clientID;
@@ -74,20 +76,20 @@ public class Client implements Identifiable, CsvPersistable, Comparable<Client>{
 	public int compareTo(Client o) { // Comparable Interface Method
 		
 		if(o.getTotalSpent() > this.getTotalSpent())
-			return 1;
+			return 1; // Collections looks at the return and sees that it's 1, which means that if 1 is returned then other is bigger than the currently viewed client and this is useful for returning the totalSpent from the clients in descending order
 		else if(o.getTotalSpent() < this.getTotalSpent())
-			return -1;
+			return -1; // If it's -1, then the currently viewed object is bigger than the object it's being compared to. This is useful again for descending order of totalSpent
 		else
-			return 0;
+			return 0; // If they're equal then it returns 0
 		
 	}
 
 	@Override
 	public String toCsvRow() { // CsvPersistable Interface method
-		return this.getID() + ";" + this.getFirstName() + ";" + this.getLastName() + ";" + this.getEmail();
+		return this.getID() + ";" + this.getFirstName() + ";" + this.getLastName() + ";" + this.getEmail(); // This prints the values of the client to a csv row that is permissible 
 	}
 	
-	public static Client fromCsvRow(String csvLine) throws InvalidClientDataException {
+	public static Client fromCsvRow(String csvLine) throws InvalidClientDataException { // This method check if the csvLine is valid and then creates a client from it
 		
 		Client client = null;
 

@@ -1,5 +1,19 @@
 package text_files;
 
+//Assignment 3
+//Question: Smart Travel Agency
+//Written by: Harsh Patel (40341498)
+
+//The purpose of this assignment is to practice using Interfaces, Generics, ArrayList and LinkedList. The interfaces are used so that we can share common features between multiple classes that are not connected. Generics
+//are useful when it doesn't matter which file we put but the files are able to be placed there. These generics usually need a specific type which is why we use the interfaces and abstract classes to specify which classes
+//can be put in the generics. This assignment also enhances usability so that it can be with no limited spaces, using arrayList. This allows us to store multiple instances without a limit. LinkedList will be used as a real
+//feature that is seen, which are the recently viewed objects. When the user views a specific object the recently viewed will save which objects were seen recently
+
+//This file essentially handles any of the fileManagers that we previously had. Now since we have csvPersistable as a interface, we can specify that the file manager must have a file that implements that interface. Now
+//all that has to be done is create the writer and then since each class has a toCsvRow it can simply call it and will be saved using that
+
+//Load method will now do the same but instead we must check which class is coming in, depending on that we save it to the given filePath. It does all the regular check as well that it has done previously.
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
