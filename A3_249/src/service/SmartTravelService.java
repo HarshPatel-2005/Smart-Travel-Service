@@ -1061,10 +1061,17 @@ import travel_package.Trip;
 			Predicate<Trip> destinationString = t -> t.getDestination().equalsIgnoreCase(userInputDestination);
 			tripFiltered = tripsRepo.filter(destinationString);
 			
+			
+			boolean found = false;
 			for(Trip t : tripFiltered) {
+				found = true;
 				System.out.print("\nFiltered Trip for destination: " + userInputDestination);
 				System.out.println("\n-----------------" + t.toString() + "\n-----------------");
 				recentTrips.addRecent(t);
+			}
+			
+			if(!found) {
+				System.out.println("There are no destinations for the trip: " + userInputDestination);
 			}
 				
 		}
