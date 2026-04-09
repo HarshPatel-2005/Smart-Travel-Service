@@ -37,12 +37,17 @@ public class RecentList <T>{
 	
 	public void printRecent() {
 		
-		Iterator<T> iterator = list.iterator(); // Creates an iterator interface in order to traverse a collection one by one. This list will print from the most recent item added to the oldest item added
-		
-		while(iterator.hasNext()) { // Check if there's another value after the one it's currently on
-			System.out.println(iterator.next()); // Print the next value
-			System.out.print("-------------------");
+		for(T item : list) {
+			System.out.println(item.toString());
+			System.out.println("-------------------");
 		}
+		
+//		Iterator<T> iterator = list.iterator(); // Creates an iterator interface in order to traverse a collection one by one. This list will print from the most recent item added to the oldest item added
+//		
+//		while(iterator.hasNext()) { // Check if there's another value after the one it's currently on
+//			System.out.println(iterator.next()); // Print the next value
+//			System.out.print("-------------------");
+//		}
 		
 	}
 	
